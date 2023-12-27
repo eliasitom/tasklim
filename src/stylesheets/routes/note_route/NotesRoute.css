@@ -1,0 +1,31 @@
+.notes-route-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 40px;
+    width: 100%;
+}
+.notes-route {
+    display: flex;
+    flex-direction: column;
+
+    width: 90%;
+}
+.notes-route-title {
+    margin-bottom: 20px;
+
+    font-size: 34px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.notes-container {
+    display: flex;
+    flex-direction: row;
+
+    flex-wrap: wrap;
+
+    width: 90%;
+}

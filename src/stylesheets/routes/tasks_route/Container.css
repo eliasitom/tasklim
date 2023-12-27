@@ -1,0 +1,21 @@
+.tasks-route-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 80%;
+    min-height: 600px;
+    padding: 10px;
+    margin: 0 20px 0 0;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.tasks-route-container-title {
+    width: 95%;
+    margin-bottom: 20px;
+
+    font-size: 26px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.4);
+}

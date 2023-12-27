@@ -1,0 +1,75 @@
+.note-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 250px;
+    height: 300px;
+    margin: 0 0 20px 10px;
+
+    background-color: var(--color-2);
+    box-shadow: 0 5px 0 black;
+    border: solid black 2px;
+    border-radius: 10px;
+}
+.note-form form {
+    display: flex;
+    flex-direction: column;
+    
+    width: 90%;
+    height: 90%;
+}
+
+.note-form input {
+    padding: 0 5px 0 5px;
+    height: 30px;
+    margin-bottom: 10px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.note-form input::placeholder {
+    size: 18px;
+    color: rgb(60, 60, 60);
+}
+
+.note-form textarea {
+    padding: 5px 5px 5px 5px;
+    height: 170px;
+    margin-bottom: 10px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+}
+.note-form textarea::placeholder {
+    color: rgb(60, 60, 60);
+    font-size: 16px;
+}
+
+.note-form button {
+    height: 30px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid black 2px;
+    border-radius: 10px;
+    box-shadow: 0 5px 0 black;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.note-form button:hover {
+    animation-name: button-hover;
+    animation-duration: 0.1s;
+    animation-fill-mode: forwards;
+}
+.note-form button:not(:hover) {
+    animation-name: button-not-hover;
+    animation-duration: 0.1s;
+    animation-fill-mode: forwards;
+}

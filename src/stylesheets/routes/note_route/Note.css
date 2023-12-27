@@ -1,0 +1,157 @@
+.note {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 250px;
+    height: 300px;
+    margin: 0 0 20px 10px;
+
+    box-shadow: 0 5px 0 black;
+    border: solid black 2px;
+    border-radius: 10px;
+}
+.note-shake {
+    animation-name: note-shake;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+@keyframes note-shake {
+    0% {
+        transform: scale(1);
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: scale(1.04);
+        transform: rotate(1deg);
+    }
+    100% {
+        transform: scale(1);
+        transform: rotate(0deg);
+    }
+}
+
+.note-title {
+    height: 30px;
+    margin: 15px 0 10px 0;
+    width: 85%;
+    padding: 0 5px 0 5px;
+
+    border: none;
+    border-radius: 10px;
+    
+    display: flex;
+    align-items: center;
+
+    font-size: 18px;
+}
+
+.note-body {
+    padding: 5px 10px 5px 5px;
+    height: 170px;
+    width: 200px;
+    margin-bottom: 10px;
+
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    
+    font-size: 16px;
+    word-break: break-word !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    white-space: pre-wrap;
+}
+
+.note-body::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 5px;
+}
+.note-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.note-options svg {
+    font-size: 28px;
+    margin: 0 10px 0 10px;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+
+
+/* EDIT MODE */
+
+.note form {
+    display: flex;
+    flex-direction: column;
+    
+    width: 90%;
+    height: 90%;
+    margin-top: 15px;
+}
+
+.note form input {
+    padding: 0 5px 0 5px;
+    height: 30px;
+    margin-bottom: 10px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.note form input::placeholder {
+    size: 18px;
+    color: rgb(60, 60, 60);
+}
+
+.note form textarea {
+    padding: 5px 5px 5px 5px;
+    height: 170px;
+    margin-bottom: 10px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+}
+.note form textarea::placeholder {
+    color: rgb(60, 60, 60);
+    font-size: 16px;
+}
+
+.note-edit-endpoints {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+}
+.note form button {
+    height: 30px;
+    width: 140px;
+    margin: 0 5px 0 5px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid black 2px;
+    border-radius: 10px;
+    box-shadow: 0 5px 0 black;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.note form button:hover {
+    animation-name: button-hover;
+    animation-duration: 0.1s;
+    animation-fill-mode: forwards;
+}
+.note form button:not(:hover) {
+    animation-name: button-not-hover;
+    animation-duration: 0.1s;
+    animation-fill-mode: forwards;
+}

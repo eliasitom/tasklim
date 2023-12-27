@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  font-family: 'Rubik', sans-serif;
+
+  --main-color: #f6e4d1;
+  --color-0: #1d1c24;
+  --color-1: rgb(255, 251, 247);
+  --color-1-hover: rgb(232, 228, 224);
+
+  --color-2: rgb(225, 179, 88);
+  --color-2-hover: rgb(207, 148, 81);
+
+  --color-3: rgb(225, 88, 88);
+  --color-3-hover: rgb(193, 76, 76);
+
+  --color-4: rgb(145, 225, 88);
+  --color-4-hover: rgb(141, 194, 76);
+
+  --color-5: rgb(225, 88, 182);
+ --color-5-hover: rgb(196, 76, 158);
+}
+
+:root {
+  
+  background-color: var(--main-color);
+  color: var(--color-0);
+}
+
