@@ -85,11 +85,22 @@ app.post("/api/post_task", async (req, res) => {
   try {
     const { task } = req.body;
 
-    const newTask = new TaskSchema({ body: task });
+    const newTaskSchema = new TaskSchema({ body: task });
 
-    await newTask.save();
+    const newTask = await newTaskSchema.save();
 
     res.status(200).json({ newTask });
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+});
+
+app.get("/api/get_task/:taskId", async (req, res) => {
+  try {
+    const taskId = req.params.taskId
+    const task = await TaskSchema.findById({_id: taskId});
+    res.status(200).json({ task });
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);
@@ -104,7 +115,7 @@ app.get("/api/get_tasks", async (req, res) => {
     res.status(500).send("internal error has ocurred");
     console.log(error);
   }
-});
+})
 
 //#endregion
 

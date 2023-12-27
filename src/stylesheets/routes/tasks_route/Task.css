@@ -5,22 +5,44 @@
     justify-content: center;
 
     width: 100%;
-    min-height: 70px;
-    margin: 0 0 20px 10px;
+    min-height: 100px;
+    margin: 0 5px 20px 0;
 
     background-color: var(--color-2);
-    box-shadow: 0 5px 0 black;
-    border: solid black 2px;
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
+    border: solid rgb(40, 40, 40) 2px;
     border-radius: 10px;
+    color: rgb(40, 40, 40);
 }
 
 .task-body {
-    height: 90%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    height: 65%;
+    width: 90%;
+    margin: 10px 0 0 0;
+
 }
 .task-footer {
     display: flex;
     align-items: center;
-    height: 10%;
+    justify-content: space-between;
+
+    height: 30%;
+    width: 90%;
+    margin: 0;
 
     color: rgba(0, 0, 0, 0.4);
+}
+.task-footer p {
+    font-size: 18px;
+}
+.task-options svg{
+    font-size: 22px;
+    margin-right: 10px;
+
+    color: rgb(40, 40, 40);
+    cursor: pointer;
 }

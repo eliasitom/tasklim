@@ -73,7 +73,18 @@ export default function TasksRoute() {
         completed: tasksCompleted.map(task => task._id)
       });
     })
+    .catch(err => console.log(err))
   }, [])
+
+
+  const pushTask = (newTask) => {
+    const newTasks = {
+      toDo: [...items.toDo, newTask],
+      running: items.running,
+      completed: items.completed
+    }
+    setItems(newTasks)
+  }
 
 
 
@@ -95,7 +106,7 @@ export default function TasksRoute() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <Container id="to-do" items={items.toDo} activeId={activeId} />
+        <Container id="to-do" items={items.toDo} activeId={activeId} pushTask={pushTask}/>
         <Container id="running" items={items.running} activeId={activeId} />
         <Container id="completed" items={items.completed} activeId={activeId} />
         <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>

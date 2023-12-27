@@ -4,67 +4,6 @@
     align-items: center;
     flex-direction: column;
 }
-
-.tasks-route-main form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-
-    width: 300px;
-    height: 120px;
-    padding: 10px;
-    margin-bottom: 20px;
-
-    background-color: var(--color-2);
-    box-shadow: 0 5px 0 black;
-    border: solid black 2px;
-    border-radius: 10px;
-}
-.tasks-route-main form p {
-    font-size: 22px;
-    margin: 0 0 10px 0;
-    color: rgba(0, 0, 0, 0.4);
-    text-transform: uppercase;
-}
-.tasks-route-main form input {
-    padding: 0 5px 0 5px;
-    height: 30px;
-    margin-bottom: 10px;
-
-    background-color: var(--color-2-hover);
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-}
-.tasks-route-main form input::placeholder {
-    size: 18px;
-    color: rgb(60, 60, 60);
-}
-.tasks-route-main form button {
-    height: 30px;
-  
-    background-color: var(--color-1);
-    font-size: 18px;
-    border: solid black 2px;
-    border-radius: 10px;
-    box-shadow: 0 5px 0 black;
-    cursor: pointer;
-    text-transform: uppercase;
-
-}
-.tasks-route-main form button:hover {
-    animation-name: button-hover;
-    animation-duration: 0.1s;
-    animation-fill-mode: forwards;
-}
-.tasks-route-main form button:not(:hover) {
-    animation-name: button-not-hover;
-    animation-duration: 0.1s;
-    animation-fill-mode: forwards;
-}
-
-
 .tasks-route {
     display: flex;
     flex-direction: row;

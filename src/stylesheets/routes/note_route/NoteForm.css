@@ -9,8 +9,8 @@
     margin: 0 0 20px 10px;
 
     background-color: var(--color-2);
-    box-shadow: 0 5px 0 black;
-    border: solid black 2px;
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
+    border: solid rgb(40, 40, 40) 2px;
     border-radius: 10px;
 }
 .note-form form {
@@ -57,11 +57,12 @@
   
     background-color: var(--color-1);
     font-size: 18px;
-    border: solid black 2px;
+    border: solid rgb(40, 40, 40) 2px;
     border-radius: 10px;
-    box-shadow: 0 5px 0 black;
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
     cursor: pointer;
     text-transform: uppercase;
+    color: rgb(40, 40, 40);
 }
 .note-form button:hover {
     animation-name: button-hover;
