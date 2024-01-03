@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-import Container from "./container";
+import Container from "./Container";
 import { Item } from "./Task";
 
 
@@ -61,19 +61,19 @@ export default function TasksRoute() {
     fetch("http://localhost:8000/api/get_tasks", {
       method: "GET"
     })
-    .then(response => response.json())
-    .then(res => {
-      const tasksToDo = res.tasks.filter(current => current.state === "to-do")
-      const tasksRunning = res.tasks.filter(current => current.state === "in-progress")
-      const tasksCompleted = res.tasks.filter(current => current.state === "completed")
+      .then(response => response.json())
+      .then(res => {
+        const tasksToDo = res.tasks.filter(current => current.state === "to-do")
+        const tasksRunning = res.tasks.filter(current => current.state === "running")
+        const tasksCompleted = res.tasks.filter(current => current.state === "completed")
 
-      setItems({
-        toDo: tasksToDo.map(task => task._id),
-        running: tasksRunning.map(task => task._id),
-        completed: tasksCompleted.map(task => task._id)
-      });
-    })
-    .catch(err => console.log(err))
+        setItems({
+          toDo: tasksToDo.map(task => task._id),
+          running: tasksRunning.map(task => task._id),
+          completed: tasksCompleted.map(task => task._id)
+        });
+      })
+      .catch(err => console.log(err))
   }, [])
 
 
@@ -95,23 +95,55 @@ export default function TasksRoute() {
     })
   );
 
+  const handlePullNote = (id, state) => {
+    fetch(`http://localhost:8000/api/delete_task/${id}`, {
+      method: "DELETE"
+    })
+    .then(() => {
+      setItems(prev => {
+        const newItems = {
+          toDo: state === "to-do" ? prev.toDo.filter(elem => elem !== id) : prev.toDo,
+          running: state === "running" ? prev.running.filter(elem => elem !== id) : prev.running,
+          completed: state === "completed" ? prev.completed.filter(elem => elem !== id) : prev.completed
+        }
+        return newItems
+      })
+    })
+  }
+
   return (
     <div className="tasks-route-main">
-    <div className="tasks-route">
-      <DndContext
-        announcements={defaultAnnouncements}
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        <Container id="to-do" items={items.toDo} activeId={activeId} pushTask={pushTask}/>
-        <Container id="running" items={items.running} activeId={activeId} />
-        <Container id="completed" items={items.completed} activeId={activeId} />
-        <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
-      </DndContext>
-    </div>
+      <div className="tasks-route">
+        <DndContext
+          announcements={defaultAnnouncements}
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <Container
+            id="to-do"
+            items={items.toDo}
+            activeId={activeId}
+            pushTask={pushTask}
+            pullNote={id => handlePullNote(id, "to-do")}
+          />
+          <Container
+            id="running"
+            items={items.running}
+            activeId={activeId}
+            pullNote={id => handlePullNote(id, "running")}
+          />
+          <Container
+            id="completed"
+            items={items.completed}
+            activeId={activeId}
+            pullNote={id => handlePullNote(id, "completed")}
+          />
+          <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
+        </DndContext>
+      </div>
     </div>
   );
 
@@ -141,7 +173,7 @@ export default function TasksRoute() {
     const activeContainer = findContainer(id);
     let overContainer = findContainer(overId);
 
-    if(overContainer === undefined) overContainer = "toDo"
+    if (overContainer === undefined) overContainer = "toDo"
 
     if (
       !activeContainer ||
@@ -150,7 +182,7 @@ export default function TasksRoute() {
     ) {
       return;
     }
-    
+
     setItems((prev) => {
       const activeItems = prev[activeContainer];
       const overItems = prev[overContainer];
@@ -167,7 +199,7 @@ export default function TasksRoute() {
         const isBelowLastItem =
           over &&
           overIndex === overItems.length - 1 &&
-          
+
           draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
 
         const modifier = isBelowLastItem ? 1 : 0;
@@ -175,7 +207,7 @@ export default function TasksRoute() {
         newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
       }
 
-      return {
+      const newTasks = {
         ...prev,
         [activeContainer]: [
           ...prev[activeContainer].filter((item) => item !== active.id)
@@ -185,7 +217,15 @@ export default function TasksRoute() {
           items[activeContainer][activeIndex],
           ...prev[overContainer].slice(newIndex, prev[overContainer].length)
         ]
-      };
+      }
+
+      fetch("http://localhost:8000/api/change_task_state", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldTasks: prev, newTasks })
+      })
+
+      return newTasks
     });
   }
 

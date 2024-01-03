@@ -9,7 +9,7 @@ import {
 
 import SortableItem from "./Task";
 
-export default function Container({ id, items, pushTask, activeId }) {
+export default function Container({ id, items, pushTask, activeId, pullNote }) {
   const [newTask, setNewTask] = useState("")
 
   const { setNodeRef } = useDroppable({
@@ -47,7 +47,7 @@ export default function Container({ id, items, pushTask, activeId }) {
         <p className="tasks-route-container-title">{id}</p>
         <div className="tasks-route-container-tasks-cont">
           {items.map((id) => (
-            <SortableItem key={id} id={id} activeId={activeId} />
+            <SortableItem key={id} id={id} activeId={activeId} pullNote={pullNote}/>
           ))}
         </div>
         {id === "to-do" ? (

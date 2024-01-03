@@ -9,6 +9,10 @@ const taskSchema = new Schema({
   state: {
     type: String,
     default: "to-do"
+  },
+  color: {
+    type: Number,
+    default: 0
   }
 });
 

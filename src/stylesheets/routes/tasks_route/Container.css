@@ -4,7 +4,7 @@
     align-items: center;
 
     width: 25%;
-    height: 600px;
+    height: 570px;
     padding: 10px;
     margin: 0 20px 0 0;
 
@@ -60,6 +60,7 @@
 .tasks-route-container-footer input {
     padding: 0 5px 0 5px;
     height: 80%;
+    width: 70%;
     margin-left: 0;
 
     background-color: rgba(0, 0, 0, 0.2);

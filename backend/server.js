@@ -99,7 +99,7 @@ app.post("/api/post_task", async (req, res) => {
 app.get("/api/get_task/:taskId", async (req, res) => {
   try {
     const taskId = req.params.taskId
-    const task = await TaskSchema.findById({_id: taskId});
+    const task = await TaskSchema.findById({ _id: taskId });
     res.status(200).json({ task });
   } catch (error) {
     res.status(500).send("internal error has ocurred");
@@ -111,6 +111,71 @@ app.get("/api/get_tasks", async (req, res) => {
   try {
     const tasks = await TaskSchema.find({});
     res.status(200).json({ tasks });
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.patch("/api/change_task_state", async (req, res) => {
+  try {
+    const { newTasks, oldTasks } = req.body
+
+    //Comprobar toDo
+    newTasks.toDo.forEach(async newTask => {
+      if (oldTasks.running.includes(newTask) || oldTasks.completed.includes(newTask)) {
+        //El estado de la tarea era diferente a "to-do"
+        await TaskSchema.findOneAndUpdate({ _id: newTask }, { $set: { state: "to-do" } })
+      }
+    })
+
+    //Comprobar running
+    newTasks.running.forEach(async newTask => {
+      if (oldTasks.toDo.includes(newTask) || oldTasks.completed.includes(newTask)) {
+        //El estado de la tarea era diferente a "running"
+        await TaskSchema.updateOne({ _id: newTask }, { $set: { state: "running" } })
+      }
+    })
+
+    //Comprobar completed
+    newTasks.completed.forEach(async newTask => {
+      if (oldTasks.toDo.includes(newTask) || oldTasks.running.includes(newTask)) {
+        //El estado de la tarea era diferente a "completed"
+        await TaskSchema.findOneAndUpdate({ _id: newTask }, { $set: { state: "completed" } })
+      }
+    })
+
+    res.status(200).send("request received")
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.delete("/api/delete_task/:id", async (req, res) => {
+  try {
+    const id = req.params.id
+
+    await TaskSchema.deleteOne({_id: id})
+
+    res.status(200).send("request received")
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.post("/api/edit_task", async (req, res) => {
+  try {
+    const {newBody, newColor, taskId} = req.body
+
+    const task = await TaskSchema.findOne({_id: taskId})
+    task.color = newColor
+    task.body = newBody
+    await task.save()
+
+    res.status(200).send("request received")
+
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);
