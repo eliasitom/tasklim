@@ -139,7 +139,9 @@ export default function TasksRoute() {
 
     // Find the containers
     const activeContainer = findContainer(id);
-    const overContainer = findContainer(overId);
+    let overContainer = findContainer(overId);
+
+    if(overContainer === undefined) overContainer = "toDo"
 
     if (
       !activeContainer ||
@@ -148,7 +150,7 @@ export default function TasksRoute() {
     ) {
       return;
     }
-
+    
     setItems((prev) => {
       const activeItems = prev[activeContainer];
       const overItems = prev[overContainer];
