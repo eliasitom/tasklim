@@ -6,15 +6,81 @@ require("./database");
 
 const TaskSchema = require("./schemas/TaskSchema");
 const NoteSchema = require("./schemas/NoteSchema");
+const UserSchema = require("./schemas/UserSchema");
 
 const cors = require("cors");
+
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = require("./privateKeys")
+const bodyParser = require('body-parser');
 
 // Middleware
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint
+
+//#region AUTHENTICATION
+
+app.post("/api/signup", async (req, res) => {
+  try {
+    const { username, password } = req.body
+
+    if (password && username) {
+      const newUser = new UserSchema({
+        username,
+        password
+      })
+
+      const savedUser = await newUser.save()
+      const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '24h' });
+
+      res.status(200).json({ token, user: savedUser })
+    } else {
+      res.status(400).send("Bad request")
+    }
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+app.post("/api/login", async (req, res) => {
+  try {
+    const { username, password } = req.body
+
+    const user = await UserSchema.findOne({ username })
+
+    if (user.password === password) {
+      const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '24h' });
+
+      res.status(200).json({ user, token })
+    }
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.get("/api/verify_user/:token", async (req, res) => {
+  try {
+    const token = req.params.token
+
+    const decoded = jwt.verify(token, SECRET_KEY);
+
+    res.status(200).json({ message: "valid token" })
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      res.json({ message: "expired token" })
+    } else {
+      res.json({ message: "invalid token" })
+    }
+  }
+})
+
+//#endregion
 
 //#region NOTES
 app.post("/api/post_note", async (req, res) => {
@@ -156,7 +222,7 @@ app.delete("/api/delete_task/:id", async (req, res) => {
   try {
     const id = req.params.id
 
-    await TaskSchema.deleteOne({_id: id})
+    await TaskSchema.deleteOne({ _id: id })
 
     res.status(200).send("request received")
   } catch (error) {
@@ -167,9 +233,9 @@ app.delete("/api/delete_task/:id", async (req, res) => {
 
 app.post("/api/edit_task", async (req, res) => {
   try {
-    const {newBody, newColor, taskId} = req.body
+    const { newBody, newColor, taskId } = req.body
 
-    const task = await TaskSchema.findOne({_id: taskId})
+    const task = await TaskSchema.findOne({ _id: taskId })
     task.color = newColor
     task.body = newBody
     await task.save()

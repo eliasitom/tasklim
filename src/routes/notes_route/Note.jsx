@@ -28,6 +28,7 @@ const Note = ({ data, pullNote }) => {
   const [animationMode, setAnimationMode] = useState(false)
 
   const handleColor = () => {
+    setAnimationMode(false)
     setAnimationMode(true)
     setTimeout(() => {
       setAnimationMode(false)
