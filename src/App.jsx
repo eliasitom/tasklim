@@ -1,7 +1,7 @@
 import "./App.css";
 
 import { Route, Routes, useNavigate } from "react-router-dom";
-import HomeRoute from "./routes/HomeRoute";
+import HomeRoute from "./routes/home_route/HomeRoute";
 import NotesRoute from "./routes/notes_route/NotesRoute";
 import TasksRoute from "./routes/tasks_route/TasksRoute";
 import AuthenticationRoute from "./routes/authentication_route/AuthenticationRoute";
@@ -10,7 +10,6 @@ import { useEffect } from "react";
 const App = () => {
   const navigate = useNavigate()
 
-
   useEffect(() => {
     const authToken = localStorage.getItem("authToken")
     fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
@@ -18,7 +17,6 @@ const App = () => {
     })
     .then(response => response.json())
     .then(res => {
-      console.log(res)
       if(res.message === "invalid token" || res.message === "expired token") {
         navigate("/auth")
       }

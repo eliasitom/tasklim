@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoint
 
-//#region AUTHENTICATION
+//#region AUTHENTICATION & USER_OPTIONS
 
 app.post("/api/signup", async (req, res) => {
   try {
@@ -77,6 +77,25 @@ app.get("/api/verify_user/:token", async (req, res) => {
     } else {
       res.json({ message: "invalid token" })
     }
+  }
+})
+
+app.post("/api/edit_user", async (req, res) => {
+  try {
+    const { newUsername, newPassword, newProfilePicture, userId } = req.body
+
+    const user = await UserSchema.findOne({_id: userId})
+
+    user.username = newUsername
+    user.password = newPassword
+    user.profilePicture = newProfilePicture
+
+    const savedUser = await user.save()
+
+    res.status(200).json({user: savedUser})
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
   }
 })
 

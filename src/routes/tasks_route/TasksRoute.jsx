@@ -76,6 +76,13 @@ export default function TasksRoute() {
       .catch(err => console.log(err))
   }, [])
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
+
 
   const pushTask = (newTask) => {
     const newTasks = {
@@ -86,16 +93,7 @@ export default function TasksRoute() {
     setItems(newTasks)
   }
 
-
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  );
-
-  const handlePullNote = (id, state) => {
+  const handlePullTask = (id, state) => {
     fetch(`http://localhost:8000/api/delete_task/${id}`, {
       method: "DELETE"
     })
@@ -127,19 +125,19 @@ export default function TasksRoute() {
             items={items.toDo}
             activeId={activeId}
             pushTask={pushTask}
-            pullNote={id => handlePullNote(id, "to-do")}
+            pullTask={id => handlePullTask(id, "to-do")}
           />
           <Container
             id="running"
             items={items.running}
             activeId={activeId}
-            pullNote={id => handlePullNote(id, "running")}
+            pullTask={id => handlePullTask(id, "running")}
           />
           <Container
             id="completed"
             items={items.completed}
             activeId={activeId}
-            pullNote={id => handlePullNote(id, "completed")}
+            pullTask={id => handlePullTask(id, "completed")}
           />
           <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
         </DndContext>

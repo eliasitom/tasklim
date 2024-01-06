@@ -65,7 +65,7 @@ const AuthenticationRoute = () => {
         .then(response => response.json())
         .then(res => {
           localStorage.setItem("authToken", res.token)
-          localStorage.setItem("user", res.user)
+          localStorage.setItem("user", JSON.stringify(res.user))
           navigate("/")
         })
         .catch(error => console.log(error))

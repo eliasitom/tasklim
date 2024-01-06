@@ -65,7 +65,7 @@ export function Item({ id, activeId }) {
     </div>
   );
 }
-export default function SortableItem({ activeId, id, pullNote }) {
+export default function SortableItem({ activeId, id, pullTask }) {
   const {
     attributes,
     listeners,
@@ -165,7 +165,7 @@ export default function SortableItem({ activeId, id, pullNote }) {
         <p className="task-body">{body}</p>
         <div className="task-footer">
           <div className="task-options">
-            <FaTrash onClick={() => pullNote(id)} />
+            <FaTrash onClick={() => pullTask(id)} />
             <FaPalette onClick={handleColor}/>
             <FaEdit />
           </div>

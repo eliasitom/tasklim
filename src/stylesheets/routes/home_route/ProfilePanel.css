@@ -1,0 +1,59 @@
+.profile-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+
+    width: 200px;
+    height: 350px;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.profile-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.profile-picture {
+    width: 60%;
+    margin: 20px 0 10px 0;
+
+    border-radius: 50%;
+    border: solid var(--color-0) 2px;
+    box-shadow: 0 5px 0 var(--color-0);
+}
+.profile-username {
+    margin: 0;
+    font-size: 28px;
+}
+
+
+.profile-logout {
+    width: fit-content;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    padding: 3px 30px 3px 30px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+}
+
+.profile-logout:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.profile-logout:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}

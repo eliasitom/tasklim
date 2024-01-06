@@ -2,11 +2,11 @@
   margin: 0;
   font-family: 'Rubik', sans-serif;
 
-  --main-color: #f6e4d1;
-  --main-color-hover: #ccb3a8;
+  --main-color: #f1cd92;
+  --main-color-hover: #eec27b;
   --color-0: #1d1c24;
-  --color-1: rgb(255, 251, 247);
-  --color-1-hover: rgb(232, 228, 224);
+  --color-1: #f2d4a5;
+  --color-1-hover: #e7c48d;
 
   --color-2: rgb(225, 179, 88);
   --color-2-hover: rgb(207, 148, 81);
