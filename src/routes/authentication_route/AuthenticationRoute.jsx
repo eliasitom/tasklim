@@ -14,18 +14,20 @@ const AuthenticationRoute = () => {
 
 
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken")
-    fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
-      method: "GET"
-    })
-      .then(response => response.json())
-      .then(res => {
-        console.log(res)
-        if (res.message === "valid token") {
-          navigate("/")
-        }
+    if (JSON.parse(localStorage.getItem("user")) !== null) {
+      const authToken = localStorage.getItem("authToken")
+      fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
+        method: "GET"
       })
-      .catch(error => console.log(error))
+        .then(response => response.json())
+        .then(res => {
+          console.log(res)
+          if (res.message === "valid token") {
+            navigate("/")
+          }
+        })
+        .catch(error => console.log(error))
+    }
   }, [])
 
   const handleSignUp = (e) => {
@@ -40,8 +42,9 @@ const AuthenticationRoute = () => {
         })
           .then(response => response.json())
           .then(res => {
+            console.log(res)
             localStorage.setItem("authToken", res.token)
-            localStorage.setItem("user", res.user)
+            localStorage.setItem("user", JSON.stringify(res.user))
             navigate("/")
           })
           .catch(error => console.log(error))

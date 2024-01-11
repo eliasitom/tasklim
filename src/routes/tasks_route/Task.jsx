@@ -1,6 +1,9 @@
 import "../../stylesheets/routes/tasks_route/Task.css";
 
+import TaskModal from "./TaskModal";
+
 import React, { useEffect, useState } from "react";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -8,21 +11,23 @@ import moment from "moment";
 
 import { FaTrash, FaPalette, FaEdit } from "react-icons/fa";
 
+
+const mainColors = [
+  "rgb(225, 179, 88)",
+  "rgb(225, 88, 88)",
+  "rgb(145, 225, 88)",
+  "rgb(225, 88, 182)",
+];
+const secondaryColors = [
+  "rgb(207, 148, 81)",
+  "rgb(193, 76, 76)",
+  "rgb(141, 194, 76)",
+  "rgb(196, 76, 158)",
+];
+
+
 export function Item({ id, activeId }) {
   const [taskData, setTaskData] = useState({});
-
-  const mainColors = [
-    "rgb(225, 179, 88)",
-    "rgb(225, 88, 88)",
-    "rgb(145, 225, 88)",
-    "rgb(225, 88, 182)",
-  ];
-  const secondaryColors = [
-    "rgb(207, 148, 81)",
-    "rgb(193, 76, 76)",
-    "rgb(141, 194, 76)",
-    "rgb(196, 76, 158)",
-  ];
 
   useEffect(() => {
     fetch(`http://localhost:8000/api/get_task/${id}`, {
@@ -65,6 +70,13 @@ export function Item({ id, activeId }) {
     </div>
   );
 }
+
+
+
+
+
+
+
 export default function SortableItem({ activeId, id, pullTask }) {
   const {
     attributes,
@@ -75,25 +87,6 @@ export default function SortableItem({ activeId, id, pullTask }) {
     isDragging,
   } = useSortable({ id });
 
-  const handleRef = React.useRef(null);
-
-  const [taskData, setTaskData] = useState({});
-  const [body, setBody] = useState("")
-  const [color, setColor] = useState(0)
-  const [animationMode, setAnimationMode] = useState(false)
-
-  const mainColors = [
-    "rgb(225, 179, 88)",
-    "rgb(225, 88, 88)",
-    "rgb(145, 225, 88)",
-    "rgb(225, 88, 182)",
-  ];
-  const secondaryColors = [
-    "rgb(207, 148, 81)",
-    "rgb(193, 76, 76)",
-    "rgb(141, 194, 76)",
-    "rgb(196, 76, 158)",
-  ];
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -102,6 +95,17 @@ export default function SortableItem({ activeId, id, pullTask }) {
     justifyContent: "center",
     alignItems: "center",
   };
+
+  const handleRef = React.useRef(null);
+
+  const [taskData, setTaskData] = useState({});
+  const [body, setBody] = useState("")
+  const [color, setColor] = useState(0)
+  const [animationMode, setAnimationMode] = useState(false)
+
+  const [editMode, setEditMode] = useState(false)
+
+
 
   const handleColor = () => {
     setAnimationMode(true)
@@ -121,8 +125,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
         taskId: id,
       }),
     })
-    .catch((err) => console.log(err));
-
+      .catch((err) => console.log(err));
   }
 
   useEffect(() => {
@@ -146,8 +149,26 @@ export default function SortableItem({ activeId, id, pullTask }) {
       .catch((err) => console.log(err));
   }, []);
 
+  const handleTaskChanged = (newBody) => {
+    setBody(newBody)
+
+    let changedTask = taskData
+    changedTask.body = newBody
+    setTaskData(changedTask)
+
+    setEditMode(false)
+  }
+
+
   return (
     <div ref={setNodeRef} style={style}>
+      {editMode ?
+        <TaskModal
+          task={taskData}
+          closeModal={() => setEditMode(false)}
+          taskChanged={handleTaskChanged}
+        />
+        : undefined}
       <div
         className={`task ${animationMode ? "note-shake" : ""}`}
         style={{
@@ -166,8 +187,8 @@ export default function SortableItem({ activeId, id, pullTask }) {
         <div className="task-footer">
           <div className="task-options">
             <FaTrash onClick={() => pullTask(id)} />
-            <FaPalette onClick={handleColor}/>
-            <FaEdit />
+            <FaPalette onClick={handleColor} />
+            <FaEdit onClick={() => setEditMode(true)} />
           </div>
           <p>{taskData.createdAt}</p>
         </div>

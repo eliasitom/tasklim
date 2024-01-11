@@ -11,17 +11,21 @@ const App = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken")
-    fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(res => {
-      if(res.message === "invalid token" || res.message === "expired token") {
-        navigate("/auth")
-      }
-    })
-    .catch(error => console.log(error))
+    if (JSON.parse(localStorage.getItem("user")) === null) {
+      navigate("/auth")
+    } else {
+      const authToken = localStorage.getItem("authToken")
+      fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
+        method: "GET"
+      })
+        .then(response => response.json())
+        .then(res => {
+          if (res.message === "invalid token" || res.message === "expired token") {
+            navigate("/auth")
+          }
+        })
+        .catch(error => console.log(error))
+    }
   }, [])
 
   return (
@@ -32,7 +36,7 @@ const App = () => {
             <h1>Mini note</h1>
           </header> :
           <header>
-            <h1 onClick={() => navigate("/")} style={{cursor: "pointer"}}>Mini note</h1>
+            <h1 onClick={() => navigate("/")} style={{ cursor: "pointer" }}>Mini note</h1>
 
             <div>
               <button

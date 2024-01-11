@@ -1,6 +1,8 @@
 import "../../stylesheets/routes/tasks_route/TasksRoute.css"
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   DndContext,
   DragOverlay,
@@ -47,6 +49,8 @@ const defaultAnnouncements = {
 };
 
 export default function TasksRoute() {
+  const navigate = useNavigate()
+
   const [items, setItems] = useState({
     toDo: [],
     running: [],
@@ -57,6 +61,12 @@ export default function TasksRoute() {
 
 
 
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem("user")) === null) {
+      navigate("/auth")
+    }
+  }, [])
+  
   useEffect(() => {
     fetch("http://localhost:8000/api/get_tasks", {
       method: "GET"

@@ -1,12 +1,24 @@
 import "../../stylesheets/routes/note_route/NotesRoute.css";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Note from "./Note";
 import NoteForm from "./NoteForm";
 
 const NotesRoute = () => {
+  const navigate = useNavigate()
+
   const [notes, setNotes] = useState([]);
+
+
+  useEffect(() => {
+    console.log(JSON.parse(localStorage.getItem("user")))
+    if (JSON.parse(localStorage.getItem("user")) === null) {
+      navigate("/auth")
+    }
+  }, [])
+  
 
   const pullNote = (noteId) => {
     const newNotes = [...notes].filter((current) => current._id !== noteId);

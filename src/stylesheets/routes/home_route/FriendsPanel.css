@@ -1,0 +1,133 @@
+.friends-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+
+    width: 500px;
+    height: 350px;
+    margin-left: 20px;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+
+/* SEARCH FRIENDS FORM */
+
+.friends-panel-form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    
+    width: 100%;
+    height: 20%;
+}
+.friends-panel-form input {
+    margin: 0 10px 0 20px;
+    height: 50%;
+    width: 50%;
+    padding: 0 5px 0 5px;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.friends-panel-form input::placeholder {
+    size: 18px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.friends-panel-form button {
+    height: 50%;
+    width: fit-content;
+    padding: 0 10px 0 10px;
+    margin-left: 5px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+
+}
+.friends-panel-form button:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.friends-panel-form button:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+
+
+/* BODY */
+
+.friends-panel-body {
+    width: 100%;
+    height: 80%;
+}
+.friends-panel-body h4 {
+    margin-left: 20px;
+
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* USER ITEMS */
+
+.friends-panel-users-container {
+    display: flex;
+    overflow-x: auto;
+
+    padding-bottom: 10px;
+    margin: 10px 20px 0 20px;
+}
+.friends-panel-users-container::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 5px;
+}
+.friends-panel-users-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.user-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    max-width: 130px;
+    margin-right: 20px;
+}
+.user-item img {
+    width: 100px;
+    margin-bottom: 5px;
+
+    border-radius: 50%;
+    border: solid var(--color-0) 2px;
+}
+.user-item p {
+    width: 100%;
+    text-align: center;
+
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    overflow: hidden;
+    white-space: nowrap;
+}

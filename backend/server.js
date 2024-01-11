@@ -80,19 +80,35 @@ app.get("/api/verify_user/:token", async (req, res) => {
   }
 })
 
-app.post("/api/edit_user", async (req, res) => {
+app.patch("/api/edit_user", async (req, res) => {
   try {
-    const { newUsername, newPassword, newProfilePicture, userId } = req.body
+    const { newUsername, newProfilePicture, userId } = req.body
 
-    const user = await UserSchema.findOne({_id: userId})
+    const user = await UserSchema.findOne({ _id: userId })
 
     user.username = newUsername
-    user.password = newPassword
     user.profilePicture = newProfilePicture
 
     const savedUser = await user.save()
 
-    res.status(200).json({user: savedUser})
+    res.status(200).json({ user: savedUser })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+
+app.get("/api/get_users_by_username/:username", async (req, res) => {
+  try {
+    const username = req.params.username
+
+    // Expresion regular con la variable username
+    const regex = new RegExp(username, 'i'); // La 'i' hace que la búsqueda sea insensible a mayúsculas y minúsculas
+
+    const usersFound = await UserSchema.find({ username: regex })
+
+    res.status(200).json({users: usersFound})
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);

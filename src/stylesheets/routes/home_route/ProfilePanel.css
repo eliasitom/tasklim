@@ -4,7 +4,7 @@
     align-items: center;
     flex-direction: column;
 
-    width: 200px;
+    width: 250px;
     height: 350px;
 
     background-color: rgba(0, 0, 0, 0.1);
@@ -17,26 +17,41 @@
     align-items: center;
     flex-direction: column;
 }
+
 .profile-picture {
-    width: 60%;
+    width: 50%;
     margin: 20px 0 10px 0;
 
     border-radius: 50%;
     border: solid var(--color-0) 2px;
     box-shadow: 0 5px 0 var(--color-0);
 }
+
 .profile-username {
     margin: 0;
     font-size: 28px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
+/* PROFILE OPTIONS */
+
+.profile-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 90%;
+    margin-bottom: 10px;
+}
+
 .profile-logout {
-    width: fit-content;
-    margin-top: 50px;
-    margin-bottom: 20px;
-    padding: 3px 30px 3px 30px;
-  
+    width: 80%;
+    padding: 3px 10px 3px 10px;
+
     background-color: var(--color-1);
     font-size: 18px;
     border: solid rgb(60, 60, 60) 2px;
@@ -52,7 +67,89 @@
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
 }
+
 .profile-logout:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.profile-enter-edit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 20%;
+    height: 100%;
+    margin-left: 10px;
+
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+}
+
+
+
+
+/* EDIT MODE */
+
+.profile-panel input {
+    width: 85%;
+    padding: 0 5px 0 5px;
+    height: 30px;
+    margin-top: 10px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.profile-panel input::placeholder {
+    size: 18px;
+    color: rgb(60, 60, 60);
+}
+
+
+.profile-edit-results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 85%;
+    margin-bottom: 10px;
+}
+
+.profile-edit-result {
+    display: flex;
+    justify-content: center;
+
+    height: 100%;
+    width: 50%;
+    padding: 5px 10px 5px 10px;
+    margin-left: 5px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+}
+
+.profile-edit-result:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.profile-edit-result:not(:hover) {
     animation-name: button-not-hover1;
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
