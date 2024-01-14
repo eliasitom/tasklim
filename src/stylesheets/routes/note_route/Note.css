@@ -67,7 +67,7 @@
 .note-body::-webkit-scrollbar {
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 5px;
+    width: 7px;
 }
 .note-body::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
@@ -120,10 +120,24 @@
     border-radius: 10px;
     resize: none;
     font-size: 16px;
+
+    cursor: text;
 }
 .note form textarea::placeholder {
     color: rgb(60, 60, 60);
     font-size: 16px;
+
+    cursor: pointer;
+}
+.note form textarea::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 7px;
+
+}
+.note form textarea::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 
 .note-edit-endpoints {
@@ -136,22 +150,24 @@
     height: 30px;
     width: 140px;
     margin: 0 5px 0 5px;
+    padding: 0 10px 0 10px;
   
-    background-color: var(--color-1);
+    background-color: rgb(40, 40, 40);
     font-size: 18px;
-    border: solid black 2px;
+    border: solid rgb(40, 40, 40) 2px;
     border-radius: 10px;
-    box-shadow: 0 5px 0 black;
     cursor: pointer;
     text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
 }
 .note form button:hover {
-    animation-name: button-hover;
-    animation-duration: 0.1s;
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
     animation-fill-mode: forwards;
 }
 .note form button:not(:hover) {
-    animation-name: button-not-hover;
-    animation-duration: 0.1s;
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
     animation-fill-mode: forwards;
 }

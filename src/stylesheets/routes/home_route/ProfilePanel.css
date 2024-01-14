@@ -92,6 +92,16 @@
     font-weight: bold;
     color: rgb(60, 60, 60);
 }
+.profile-enter-edit:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.profile-enter-edit:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
 
 
 

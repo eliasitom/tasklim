@@ -6,9 +6,10 @@ const NoteForm = ({pushNote}) => {
   const [body, setBody] = useState("");
 
   const submitNote = (e) => {
+    e.preventDefault();
+    
     if (title) {
       if (body) {
-        e.preventDefault();
 
         fetch("http://localhost:8000/api/post_note", {
           method: "POST",
@@ -41,6 +42,7 @@ const NoteForm = ({pushNote}) => {
         />
         <textarea
           placeholder="write your note here..."
+          maxLength={531}
           onChange={(e) => setBody(e.target.value)}
           value={body}
         />

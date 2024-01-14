@@ -54,7 +54,7 @@ export default function Container({ id, items, pushTask, activeId, pullTask }) {
           <div className="tasks-route-container-footer">
             <p>New task</p>
             <form onSubmit={submitTask}>
-              <input placeholder="Learn JavaScript..." onChange={e => setNewTask(e.target.value)} value={newTask}/>
+              <input placeholder="Learn JavaScript..." maxLength={621} onChange={e => setNewTask(e.target.value)} value={newTask}/>
               <button>submit</button>
             </form>
           </div>

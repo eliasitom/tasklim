@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 const AuthenticationRoute = () => {
   const navigate = useNavigate()
 
-  const [authMethod, setAuthMethod] = useState(true) // false => login, true => signup
+  const [authMethod, setAuthMethod] = useState(false) // false => login, true => signup
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -44,7 +44,7 @@ const AuthenticationRoute = () => {
           .then(res => {
             console.log(res)
             localStorage.setItem("authToken", res.token)
-            localStorage.setItem("user", JSON.stringify(res.user))
+            localStorage.setItem("user", JSON.stringify(res.user._id))
             navigate("/")
           })
           .catch(error => console.log(error))
@@ -68,7 +68,7 @@ const AuthenticationRoute = () => {
         .then(response => response.json())
         .then(res => {
           localStorage.setItem("authToken", res.token)
-          localStorage.setItem("user", JSON.stringify(res.user))
+          localStorage.setItem("user", JSON.stringify(res.user._id))
           navigate("/")
         })
         .catch(error => console.log(error))
@@ -105,6 +105,7 @@ const AuthenticationRoute = () => {
             <form className="auth-form" onSubmit={handleSignUp}>
               <input
                 placeholder="Username..."
+                maxLength={11}
                 onChange={e => setUsername(e.target.value)}
                 value={username} />
               <input

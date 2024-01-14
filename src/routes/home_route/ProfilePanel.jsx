@@ -1,6 +1,7 @@
 import "../../stylesheets/routes/home_route/ProfilePanel.css"
 
 import { useState, useEffect } from "react";
+import useMyUser from "../../custom_hooks/useMyUser";
 import { useNavigate } from "react-router-dom"
 import { MdEdit } from "react-icons/md";
 
@@ -11,7 +12,7 @@ import ProfilePicture3 from "../../images/241304241_4230888403701276_39045686027
 import ProfilePicture4 from "../../images/241331907_4230888460367937_1791198082846251953_n.jpg"
 import ProfilePicture5 from "../../images/241372609_4230888523701264_4686595043853418143_n.jpg"
 import ProfilePicture6 from "../../images/241407360_4230888517034598_3246805530277447428_n.jpg"
-
+import genericProfilePicture from "../../images/Generic-Profile-Image.png"
 const profilePictures = [
   ProfilePicture0,
   ProfilePicture1,
@@ -25,7 +26,7 @@ const profilePictures = [
 const ProfilePanel = () => {
   const navigate = useNavigate()
 
-  const user = JSON.parse(localStorage.getItem("user"))
+  const { myUser, loading, error } = useMyUser()
 
   const [newProfilePicture, setNewProfilePicture] = useState(null)
 
@@ -55,9 +56,9 @@ const ProfilePanel = () => {
 
     try {
       const resultado = await submitChanges(
-        user._id,
+        myUser._id,
         newUsername,
-        newProfilePicture ? newProfilePicture : user.profilePicture
+        newProfilePicture ? newProfilePicture : myUser.profilePicture
       );
 
       if (resultado) {
@@ -74,7 +75,6 @@ const ProfilePanel = () => {
 
 
   const submitChanges = (userId, newUsername_, newImage_) => {
-    console.log(newImage_)
     return new Promise((resolve, reject) => {
       fetch("http://localhost:8000/api/edit_user", {
         method: "PATCH",
@@ -101,7 +101,7 @@ const ProfilePanel = () => {
   const handleEnterEditMode = () => {
     setEditMode(true)
 
-    setNewUsername(user.username)
+    setNewUsername(myUser.username)
   }
   const handleCancelEditMode = () => {
     setEditMode(false)
@@ -112,17 +112,34 @@ const ProfilePanel = () => {
     setConfirmPassword("")
   }
 
+  if (loading) return (
+    <div className="profile-panel">
+      <div className="profile-info">
+        <img className="profile-picture" src={genericProfilePicture} />
+        <h3 className="profile-username">Loading...</h3>
+      </div>
+      <div className="profile-options">
+        <button disabled={true} className="profile-logout">
+          log out
+        </button>
+        <button disabled={true} className="profile-enter-edit">
+          <MdEdit />
+        </button>
+      </div>
+    </div>
+  )
+
   if (!editMode) { /* PROFILE MODE */
     return (
       <div className="profile-panel">
         <div className="profile-info">
           <img
             className="profile-picture"
-            src={profilePictures[user.profilePicture]}
+            src={profilePictures[myUser.profilePicture]}
           />
           <h3
             className="profile-username">
-            {user ? user.username : undefined}
+            {myUser ? myUser.username : undefined}
           </h3>
         </div>
         <div className="profile-options">
@@ -145,12 +162,13 @@ const ProfilePanel = () => {
         <div className="profile-info">
           <img
             className="profile-picture"
-            style={{cursor: "pointer"}}
-            src={profilePictures[newProfilePicture !== null ? newProfilePicture : user.profilePicture]}
+            style={{ cursor: "pointer" }}
+            src={profilePictures[newProfilePicture !== null ? newProfilePicture : myUser.profilePicture]}
             onClick={handleProfilePicture}
           />
           <input
             placeholder="New username..."
+            maxLength={11}
             value={newUsername}
             onChange={e => setNewUsername(e.target.value)}
           />

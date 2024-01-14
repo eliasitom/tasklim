@@ -132,12 +132,14 @@ const Note = ({ data, pullNote }) => {
         <form onSubmit={handleChanges}>
           <input
             placeholder="something here..."
+            maxLength={24}
             onChange={(e) => setNewTitle(e.target.value)}
             value={newTitle}
             style={{ backgroundColor: secondaryColors[color] }}
           />
           <textarea
             placeholder="something here..."
+            maxLength={531}
             onChange={(e) => setNewBody(e.target.value)}
             value={newBody}
             style={{ backgroundColor: secondaryColors[color] }}

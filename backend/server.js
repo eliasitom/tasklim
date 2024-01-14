@@ -3,6 +3,8 @@ const app = express();
 const PORT = 8000;
 
 require("./database");
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 
 const TaskSchema = require("./schemas/TaskSchema");
 const NoteSchema = require("./schemas/NoteSchema");
@@ -14,6 +16,7 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = require("./privateKeys")
 const bodyParser = require('body-parser');
 
+
 // Middleware
 
 app.use(cors());
@@ -21,7 +24,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Endpoint
 
 //#region AUTHENTICATION & USER_OPTIONS
 
@@ -98,7 +100,6 @@ app.patch("/api/edit_user", async (req, res) => {
   }
 })
 
-
 app.get("/api/get_users_by_username/:username", async (req, res) => {
   try {
     const username = req.params.username
@@ -108,12 +109,113 @@ app.get("/api/get_users_by_username/:username", async (req, res) => {
 
     const usersFound = await UserSchema.find({ username: regex })
 
-    res.status(200).json({users: usersFound})
+    res.status(200).json({ users: usersFound })
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);
   }
 })
+
+app.get("/api/get_user_by_id/:id", async (req, res) => {
+  try {
+    const userId = req.params.id
+    const objectId = new ObjectId(userId)
+
+    const user = await UserSchema.findOne({ _id: objectId })
+
+    res.status(200).json({ user })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+//#endregion
+
+//#region SOCIAL_OPTIONS
+
+app.post("/api/post_notification", async (req, res) => {
+  // las notificaciones de tipo "friend request" agregan inmediatamente al usuario como amigo, pero el estado es "pendiente",
+  // por lo que no se muestra como amigo. Luego de que el otro usuario confirme la solicitud el estado pasa a ser "activo"
+
+  try {
+    const notification = req.body
+
+    let senderUser = await UserSchema.findOne({ username: notification.from })
+    let userTarget = await UserSchema.findOne({ username: notification.to })
+
+    userTarget.notifications.push(notification)
+
+    if (notification.notificationType === "friend request") {
+      const newFriendToSender = { username: userTarget.username, profilePicture: userTarget.profilePicture, state: "waiting" }
+      const newFriendToTarget = { username: senderUser.username, profilePicture: senderUser.profilePicture, state: "pending" }
+
+      userTarget.friends.push(newFriendToTarget)
+      senderUser.friends.push(newFriendToSender)
+    }
+    await userTarget.save()
+    await senderUser.save()
+
+    res.status(200).json({ message: "request received successfully" })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.get("/api/get_notifications/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    const user = await UserSchema.findOne({ _id: userId })
+
+    res.status(200).json({ notifications: user.notifications })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.delete("/api/deny_friend_request/:notificationOwner/:notificationSender/:notificationId", async (req, res) => {
+  console.log(1)
+  try {
+    const notificationId = req.params.notificationId
+    let notificationOwner = await UserSchema.findOne({ username: req.params.notificationOwner })
+    let notificationSender = await UserSchema.findOne({ username: req.params.notificationSender })
+
+    // Paso 1. Eliminar la notificacion
+    if (notificationId !== "undefined_notification_id") {
+      notificationOwner.notifications =
+        notificationOwner.notifications.filter(elem => elem._id.toString() !== notificationId)
+    } else {
+      notificationOwner.notifications =
+        notificationOwner.notifications.filter(elem => {
+          if (elem.to !== notificationOwner.username
+            || elem.from !== notificationSender.username
+            || elem.notificationType !== "friend request") {
+            return elem
+          }
+        })
+    }
+
+    // Paso 2. Eliminar de la lista de amigos a notificationOwner de notificationSender y viceversa
+    notificationOwner.friends =
+      notificationOwner.friends.filter(elem => elem.username !== notificationSender.username)
+
+    notificationSender.friends =
+      notificationSender.friends.filter(elem => elem.username !== notificationOwner.username)
+
+    const savedUser = await notificationOwner.save()
+    await notificationSender.save()
+
+    res.status(200).json({ user: savedUser })
+
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
 
 //#endregion
 

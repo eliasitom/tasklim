@@ -135,6 +135,16 @@
     color: rgb(60, 60, 60);
     font-size: 16px;
 }
+.task-modal-body-input::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 7px;
+}
+.task-modal-body-input::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
 
 .task-modal-body button {
     height: 40px;

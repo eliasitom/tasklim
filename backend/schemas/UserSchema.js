@@ -13,7 +13,19 @@ const userSchema = new Schema({
   profilePicture: {
     type: Number,
     default: Math.floor(Math.random() * 7)
-  }
+  },
+  friends: [
+    {
+      username: String,
+      profilePicture: Number,
+      state: String
+    }
+  ],
+  notifications: [{
+    from: String,
+    to: String,
+    notificationType: String
+  }]
 });
 
 module.exports = model("user", userSchema);

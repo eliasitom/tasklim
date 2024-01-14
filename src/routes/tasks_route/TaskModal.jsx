@@ -57,6 +57,7 @@ const TaskModal = ({ task, closeModal, taskChanged }) => {
             </div>
             <textarea 
             className="task-modal-body-input" 
+            maxLength={621}
             placeholder="The new body of your task here..."
             value={newBody}
             onChange={e => setNewBody(e.target.value)}
