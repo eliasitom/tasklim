@@ -20,6 +20,16 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
       })
       .cath(err => console.log(err))
   }
+  const handleAcceptFriendRequest = () => {
+    fetch(`http://localhost:8000/api/accept_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(response => response.json())
+      .then(res => {
+        notificationDeleted(notification._id)
+      })
+  }
 
   return (
     <div className="notification-item">
@@ -30,20 +40,20 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
 
       <div className="notification-item-options">
         <button onClick={handleDenyFriendRequest}>deny</button>
-        <button>accept</button>
+        <button onClick={handleAcceptFriendRequest}>accept</button>
       </div>
     </div>
   )
 }
 
 export const NotificationsPanel = () => {
-  const {myUser, loading, error} = useMyUser()
+  const { myUser, loading, error } = useMyUser()
 
   const [notifications, setNotifications] = useState([])
 
 
   useEffect(() => {
-    if(loading || error) {
+    if (loading || error) {
       return
     }
 
@@ -68,14 +78,17 @@ export const NotificationsPanel = () => {
 
 
 
+
   return (
     <div className="notifications-panel">
-      <h4>Notifications</h4>
       <div className="notifications-container">
-        {notifications.length > 0 ?
-          notifications.map((current, index) => (
-            <NotificationItem key={index} notification={current} notificationDeleted={handleNotificationDelete} />
-          )) : undefined
+        {
+          loading ? <p className="notification-alert">loading...</p> :
+            notifications.length > 0 ?
+              notifications.map((current, index) => (
+                <NotificationItem key={index} notification={current} notificationDeleted={handleNotificationDelete} />
+              )) :
+              <p className="notification-alert">Nothing new :/</p>
         }
       </div>
     </div>

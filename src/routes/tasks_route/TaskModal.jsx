@@ -2,7 +2,7 @@ import "../../stylesheets/routes/tasks_route/TaskModal.css"
 
 import { ImCross  } from "react-icons/im";
 
-import avatar from "../../images/241251431_4230888380367945_1348050220600686703_n.jpg"
+import avatar from "../../images/ProfilePicture0.png"
 
 import { useState } from "react"
 

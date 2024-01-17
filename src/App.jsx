@@ -32,6 +32,11 @@ const App = () => {
     }
   }, [])
 
+  const handleTitleClick = () => {
+    navigate("/")
+    window.location.reload()
+  }
+
   return (
     <>
       {
@@ -40,7 +45,7 @@ const App = () => {
             <h1>Mini note</h1>
           </header> :
           <header>
-            <h1 onClick={() => navigate("/")} style={{ cursor: "pointer" }}>Mini note</h1>
+            <h1 onClick={handleTitleClick} style={{ cursor: "pointer" }}>Mini note</h1>
 
             <div>
               <button

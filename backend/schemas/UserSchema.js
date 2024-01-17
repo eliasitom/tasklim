@@ -12,7 +12,7 @@ const userSchema = new Schema({
   },
   profilePicture: {
     type: Number,
-    default: Math.floor(Math.random() * 7)
+    default: 0
   },
   friends: [
     {

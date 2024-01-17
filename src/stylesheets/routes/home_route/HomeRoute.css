@@ -2,4 +2,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    flex-wrap: wrap;
+}
+
+
+@media (max-width: 1150px) {
+    .home-route {
+        flex-direction: column;
+    }
 }

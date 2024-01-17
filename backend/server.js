@@ -88,6 +88,37 @@ app.patch("/api/edit_user", async (req, res) => {
 
     const user = await UserSchema.findOne({ _id: userId })
 
+    // Actualizar amigos y notificaciones
+    if (user.username !== newUsername) {
+      // Buscar todos los documentos que contienen el nombre antiguo en la lista de amigos
+      const friendsList = await UserSchema.find({
+        'friends.username': user.username
+      });
+
+      // Iterar sobre los documentos y actualizar el nombre en la lista de amigos
+      for (const currentFriend of friendsList) {
+        currentFriend.friends.forEach(friend => {
+          if (friend.username === user.username) {
+            friend.username = newUsername;
+          }
+        });
+        // Iterar sobre los documentos y actualizar el nombre en la lista de notificaciones
+        currentFriend.notifications.forEach(notification => {
+          if (notification.from === user.username) {
+            notification.from = newUsername;
+          }
+        });
+
+        await currentFriend.save();
+      }
+
+      user.notifications.forEach(notification => {
+        if(notification.to === user.username) {
+          notification.to === newUsername
+        }
+      })
+    }
+
     user.username = newUsername
     user.profilePicture = newProfilePicture
 
@@ -177,7 +208,6 @@ app.get("/api/get_notifications/:userId", async (req, res) => {
 })
 
 app.delete("/api/deny_friend_request/:notificationOwner/:notificationSender/:notificationId", async (req, res) => {
-  console.log(1)
   try {
     const notificationId = req.params.notificationId
     let notificationOwner = await UserSchema.findOne({ username: req.params.notificationOwner })
@@ -207,6 +237,64 @@ app.delete("/api/deny_friend_request/:notificationOwner/:notificationSender/:not
 
     const savedUser = await notificationOwner.save()
     await notificationSender.save()
+
+    res.status(200).json({ user: savedUser })
+
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.post("/api/accept_friend_request/:userId/:friendId/:notificationId", async (req, res) => {
+  try {
+    const { userId, friendId, notificationId } = req.params
+
+    let user;
+    let friend;
+
+    //En el caso de no recibir un Id sino un username
+    user = await UserSchema.findOne({ username: userId })
+    friend = await UserSchema.findOne({ username: friendId })
+
+    //En el caso de no recibir un username sino un Id
+    if (!user) user = await UserSchema.findOne({ _id: userId })
+    if (!friend) friend = await UserSchema.findOne({ _id: friendId })
+
+
+
+    // Establecer a firiendUsername como amigo activo
+    user.friends.forEach(elem => {
+      if (elem.username === friend.username) {
+        elem.state = "active";
+      }
+    });
+
+
+    friend.friends.forEach(elem => {
+      if (elem.username === user.username) {
+        elem.state = "active";
+      }
+    });
+
+
+    //Eliminar la notificacion
+    if (notificationId !== "undefined_notification_id") {
+      user.notifications =
+        user.notifications.filter(elem => elem._id.toString() !== notificationId)
+    } else {
+      user.notifications =
+        user.notifications.filter(elem => {
+          if (elem.to !== user.username
+            || elem.from !== friend.username
+            || elem.notificationType !== "friend request") {
+            return elem
+          }
+        })
+    }
+
+    const savedUser = await user.save()
+    await friend.save()
 
     res.status(200).json({ user: savedUser })
 

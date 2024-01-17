@@ -4,11 +4,11 @@
 }
 
 header {  
-  height: 90px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  height: 90px;
 }
 header h1 {
   margin-left: 40px;
@@ -95,4 +95,14 @@ header button:not(:hover) {
   margin-top: 5px !important;
   box-shadow: 0 2px 0 black !important;
   background-color: var(--color-1-hover) !important;
+}
+
+
+@media (max-width: 800px) {
+  header {
+    justify-content: center;
+  }
+  header h1 {
+    margin: 0;
+  }
 }

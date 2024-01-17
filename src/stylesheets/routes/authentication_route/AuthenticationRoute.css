@@ -95,3 +95,20 @@
 }
 
 
+
+@media (max-width: 800px ) {
+    .auth-form-main {
+        width: 90%;
+    }
+    .auth-main .note {
+        display: none;
+    }
+
+    .auth-form {
+        width: 80%;
+    }
+    .auth-form input {
+        width: 100%;
+    }
+}
+

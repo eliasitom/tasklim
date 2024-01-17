@@ -3,16 +3,26 @@ import "../../stylesheets/routes/home_route/ProfilePanel.css"
 import { useState, useEffect } from "react";
 import useMyUser from "../../custom_hooks/useMyUser";
 import { useNavigate } from "react-router-dom"
-import { MdEdit } from "react-icons/md";
 
-import ProfilePicture0 from "../../images/239813940_4230888500367933_3877022374063402884_n.jpg"
-import ProfilePicture1 from "../../images/241251431_4230888380367945_1348050220600686703_n.jpg"
-import ProfilePicture2 from "../../images/241278413_4230888623701254_1041618554313096870_n.jpg"
-import ProfilePicture3 from "../../images/241304241_4230888403701276_390456860279564516_n.jpg"
-import ProfilePicture4 from "../../images/241331907_4230888460367937_1791198082846251953_n.jpg"
-import ProfilePicture5 from "../../images/241372609_4230888523701264_4686595043853418143_n.jpg"
-import ProfilePicture6 from "../../images/241407360_4230888517034598_3246805530277447428_n.jpg"
-import genericProfilePicture from "../../images/Generic-Profile-Image.png"
+import { MdEdit } from "react-icons/md";
+import { IoNotifications } from "react-icons/io5";
+import { FaUser } from "react-icons/fa";
+
+import { NotificationsPanel } from "./NotificationsPanel"
+
+import ProfilePicture0 from "../../images/ProfilePicture0.png"
+import ProfilePicture1 from "../../images/ProfilePicture1.png"
+import ProfilePicture2 from "../../images/ProfilePicture2.png"
+import ProfilePicture3 from "../../images/ProfilePicture3.png"
+import ProfilePicture4 from "../../images/ProfilePicture4.png"
+import ProfilePicture5 from "../../images/ProfilePicture5.png"
+import ProfilePicture6 from "../../images/ProfilePicture6.png"
+import ProfilePicture7 from "../../images/ProfilePicture7.png"
+import ProfilePicture8 from "../../images/ProfilePicture8.png"
+import ProfilePicture9 from "../../images/ProfilePicture9.png"
+import ProfilePicture10 from "../../images/ProfilePicture10.png"
+import genericProfilePicture from "../../images/ProfilePictureDefault.png"
+
 const profilePictures = [
   ProfilePicture0,
   ProfilePicture1,
@@ -20,20 +30,34 @@ const profilePictures = [
   ProfilePicture3,
   ProfilePicture4,
   ProfilePicture5,
-  ProfilePicture6
+  ProfilePicture6,
+  ProfilePicture7,
+  ProfilePicture8,
+  ProfilePicture9,
+  ProfilePicture10,
+  genericProfilePicture
 ]
 
 const ProfilePanel = () => {
   const navigate = useNavigate()
 
-  const { myUser, loading, error } = useMyUser()
+  const myUserObject = useMyUser();
+  const [myUser, setMyUser] = useState(null);
 
   const [newProfilePicture, setNewProfilePicture] = useState(null)
 
   const [editMode, setEditMode] = useState(false)
   const [newUsername, setNewUsername] = useState("")
 
+  const [section, setSection] = useState(false) // false => profile, true => notifications
 
+
+
+  useEffect(() => {
+    if (myUserObject.loading) return
+
+    if (!myUser) setMyUser(myUserObject.myUser)
+  }, [myUserObject])
 
 
   const handleLogOut = () => {
@@ -44,7 +68,7 @@ const ProfilePanel = () => {
 
   const handleProfilePicture = () => {
     setNewProfilePicture((prev) => {
-      return prev < 6 ? prev + 1 : 0
+      return prev < 10 ? prev + 1 : 0
     })
   }
 
@@ -58,7 +82,7 @@ const ProfilePanel = () => {
       const resultado = await submitChanges(
         myUser._id,
         newUsername,
-        newProfilePicture ? newProfilePicture : myUser.profilePicture
+        newProfilePicture !== null ? newProfilePicture : myUser.profilePicture
       );
 
       if (resultado) {
@@ -70,9 +94,6 @@ const ProfilePanel = () => {
       console.error("Error calling submitChanges:", error);
     }
   };
-
-
-
 
   const submitChanges = (userId, newUsername_, newImage_) => {
     return new Promise((resolve, reject) => {
@@ -87,7 +108,8 @@ const ProfilePanel = () => {
       })
         .then(response => response.json())
         .then(res => {
-          localStorage.setItem("user", JSON.stringify(res.user))
+          localStorage.setItem("user", JSON.stringify(res.user._id))
+          setMyUser(res.user)
           resolve(true)
         })
         .catch(err => {
@@ -96,7 +118,6 @@ const ProfilePanel = () => {
         })
     })
   }
-
 
   const handleEnterEditMode = () => {
     setEditMode(true)
@@ -108,13 +129,16 @@ const ProfilePanel = () => {
 
     setNewProfilePicture(null)
     setNewUsername("")
-    setNewPassword("")
-    setConfirmPassword("")
   }
 
-  if (loading) return (
+
+  if (myUserObject.loading) return (
     <div className="profile-panel">
       <div className="profile-info">
+        <div className="profile-sections">
+          <FaUser />
+          <IoNotifications />
+        </div>
         <img className="profile-picture" src={genericProfilePicture} />
         <h3 className="profile-username">Loading...</h3>
       </div>
@@ -129,10 +153,14 @@ const ProfilePanel = () => {
     </div>
   )
 
-  if (!editMode) { /* PROFILE MODE */
+  if (!editMode && myUser && !section) { /* PROFILE MODE */
     return (
       <div className="profile-panel">
         <div className="profile-info">
+          <div className="profile-sections">
+            <FaUser onClick={() => setSection(false)} className={!section ? "active-section" : ""} />
+            <IoNotifications onClick={() => setSection(true)} className={section ? "active-section" : ""} />
+          </div>
           <img
             className="profile-picture"
             src={profilePictures[myUser.profilePicture]}
@@ -156,12 +184,22 @@ const ProfilePanel = () => {
         </div>
       </div>
     )
-  } else { /* EDIT MODE */
+  } else if (myUser && section) {
+    return (
+      <div className="profile-panel">
+        <div className="profile-sections">
+          <FaUser onClick={() => setSection(false)} className={!section ? "active-section" : ""} />
+          <IoNotifications onClick={() => setSection(true)} className={section ? "active-section" : ""} />
+        </div>
+        <NotificationsPanel />
+      </div>
+    )
+  } else if (myUser) { /* EDIT MODE */
     return (
       <div className="profile-panel">
         <div className="profile-info">
           <img
-            className="profile-picture"
+            className="profile-picture edit-profile-picture"
             style={{ cursor: "pointer" }}
             src={profilePictures[newProfilePicture !== null ? newProfilePicture : myUser.profilePicture]}
             onClick={handleProfilePicture}
