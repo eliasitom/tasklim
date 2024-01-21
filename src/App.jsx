@@ -5,13 +5,16 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 
 import HomeRoute from "./routes/home_route/HomeRoute";
 import NotesRoute from "./routes/notes_route/NotesRoute";
-import TasksRoute from "./routes/tasks_route/TasksRoute";
+import TasksRoute from "./routes/tasks_route/my_tasks/TasksRoute";
 import AuthenticationRoute from "./routes/authentication_route/AuthenticationRoute";
+import SharedTasksRoute from "./routes/tasks_route/shared_tasks/SharedTasksRoute"
+
 
 
 
 const App = () => {
   const navigate = useNavigate()
+
 
 
   useEffect(() => {
@@ -33,38 +36,54 @@ const App = () => {
   }, [])
 
   const handleTitleClick = () => {
-    navigate("/")
-    window.location.reload()
+    if (window.location.pathname === "/") {
+      window.location.reload()
+    } else {
+      navigate("/")
+    }
+  }
+
+
+  const handleTitle = () => {
+    if (window.location.pathname === "/auth") {
+      return (
+        <header>
+          <h1>Mini note</h1>
+        </header>
+      )
+    }
+    else {
+      return (
+        <header>
+          <h1 onClick={handleTitleClick} style={{ cursor: "pointer" }}>Mini note</h1>
+
+          <div>
+            <button
+              className={`${window.location.pathname == "/notes" ? "nav-bar-button-active" : null}`}
+              onClick={() => navigate("/notes")}>
+              my notes
+            </button>
+            <button
+              className={`${window.location.pathname == "/tasks" ? "nav-bar-button-active" : null}`}
+              onClick={() => navigate("/tasks")}>
+              my tasks
+            </button>
+          </div>
+        </header>
+      )
+    }
   }
 
   return (
     <>
       {
-        window.location.pathname === "/auth" ?
-          <header>
-            <h1>Mini note</h1>
-          </header> :
-          <header>
-            <h1 onClick={handleTitleClick} style={{ cursor: "pointer" }}>Mini note</h1>
-
-            <div>
-              <button
-                className={`${window.location.pathname == "/notes" ? "nav-bar-button-active" : null}`}
-                onClick={() => navigate("/notes")}>
-                notes
-              </button>
-              <button
-                className={`${window.location.pathname == "/tasks" ? "nav-bar-button-active" : null}`}
-                onClick={() => navigate("/tasks")}>
-                tasks
-              </button>
-            </div>
-          </header>
+        handleTitle()
       }
       <Routes>
         <Route path="/" element={<HomeRoute />} />
         <Route path="/notes" element={<NotesRoute />} />
         <Route path="/tasks" element={<TasksRoute />} />
+        <Route path="/shared_kanban/:kanbanName" element={<SharedTasksRoute />} />
         <Route path="/auth" element={<AuthenticationRoute />} />
       </Routes>
     </>

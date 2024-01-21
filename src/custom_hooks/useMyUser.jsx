@@ -14,6 +14,8 @@ const useMyUser = () => {
   }, [])
 
   const getMyUser = () => {
+    if (!userId) return
+
     // Devolvemos la promesa resultante de fetch
     return fetch(`http://localhost:8000/api/get_user_by_id/${userId}`, {
       method: "GET",

@@ -1,7 +1,8 @@
-import "../../stylesheets/routes/tasks_route/TasksRoute.css"
+import "../../../stylesheets/routes/tasks_route/my_tasks/TasksRoute.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/userContext";
 
 import {
   DndContext,
@@ -51,11 +52,7 @@ const defaultAnnouncements = {
 export default function TasksRoute() {
   const navigate = useNavigate()
 
-  const [items, setItems] = useState({
-    toDo: [],
-    running: [],
-    completed: [],
-  });
+  const { items, setItems } = useContext(UserContext)
   const [activeId, setActiveId] = useState();
 
 
@@ -66,25 +63,8 @@ export default function TasksRoute() {
       navigate("/auth")
     }
   }, [])
-  
-  useEffect(() => {
-    fetch("http://localhost:8000/api/get_tasks", {
-      method: "GET"
-    })
-      .then(response => response.json())
-      .then(res => {
-        const tasksToDo = res.tasks.filter(current => current.state === "to-do")
-        const tasksRunning = res.tasks.filter(current => current.state === "running")
-        const tasksCompleted = res.tasks.filter(current => current.state === "completed")
 
-        setItems({
-          toDo: tasksToDo.map(task => task._id),
-          running: tasksRunning.map(task => task._id),
-          completed: tasksCompleted.map(task => task._id)
-        });
-      })
-      .catch(err => console.log(err))
-  }, [])
+
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -107,16 +87,16 @@ export default function TasksRoute() {
     fetch(`http://localhost:8000/api/delete_task/${id}`, {
       method: "DELETE"
     })
-    .then(() => {
-      setItems(prev => {
-        const newItems = {
-          toDo: state === "to-do" ? prev.toDo.filter(elem => elem !== id) : prev.toDo,
-          running: state === "running" ? prev.running.filter(elem => elem !== id) : prev.running,
-          completed: state === "completed" ? prev.completed.filter(elem => elem !== id) : prev.completed
-        }
-        return newItems
+      .then(() => {
+        setItems(prev => {
+          const newItems = {
+            toDo: state === "to-do" ? prev.toDo.filter(elem => elem !== id) : prev.toDo,
+            running: state === "running" ? prev.running.filter(elem => elem !== id) : prev.running,
+            completed: state === "completed" ? prev.completed.filter(elem => elem !== id) : prev.completed
+          }
+          return newItems
+        })
       })
-    })
   }
 
   return (

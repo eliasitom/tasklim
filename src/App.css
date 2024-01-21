@@ -18,6 +18,7 @@ header h1 {
   color: rgb(53, 53, 53);
 }
 
+
 header div {
   display: flex;
   justify-content: center;
@@ -28,11 +29,12 @@ header div {
 }
 header button {
   height: 40px;
-  width: 140px;
+  width: 150px;
   margin: 0 5px 0 5px;
 
   background-color: var(--color-1);
   font-size: 22px;
+  font-weight: bold;
   border: solid rgb(40, 40, 40) 2px;
   border-radius: 10px;
   box-shadow: 0 5px 0 rgb(40, 40, 40);

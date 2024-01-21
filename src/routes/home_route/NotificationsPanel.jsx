@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import "../../stylesheets/routes/home_route/NotificationsPanel.css"
 
-import useMyUser from "../../custom_hooks/useMyUser";
-
-
-
+import { UserContext } from "../../contexts/userContext.jsx";
 
 
 
 const NotificationItem = ({ notification, notificationDeleted }) => {
-
+  const { myUser, setMyUser } = useContext(UserContext)
 
   const handleDenyFriendRequest = () => {
     fetch(`http://localhost:8000/api/deny_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
       method: "DELETE"
     })
-      .then(() => {
+      .then(response => response.json())
+      .then(res => {
+        setMyUser(res.user)
         notificationDeleted(notification._id)
       })
       .cath(err => console.log(err))
@@ -27,33 +26,58 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
     })
       .then(response => response.json())
       .then(res => {
+        setMyUser(res.user)
         notificationDeleted(notification._id)
       })
+      .catch(err => console.log(err))
+  }
+
+  const handleAcceptKanbanNotification = () => {
+    fetch(`http://localhost:8000/api/delete_notification/${myUser._id}/${notification._id}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json())
+      .then((res) => {
+        setMyUser(res.user)
+        notificationDeleted(notification._id)
+      })
+      .catch(err => console.log(err))
   }
 
   return (
     <div className="notification-item">
       <p className="notification-item-body">
-        <b>{notification.notificationType === "friend request" ? notification.from : ""}</b>
-        {notification.notificationType === "friend request" ? " wants to be your friend" : ""}
+        <b>{notification.from}</b>
+        {notification.notificationType === "friend request" ? " wants to be your friend" :
+          notification.notificationType === "new kanban" ? " has created a new shared kanban: " : ""}
+        {
+          notification.notificationType === "new kanban" ?
+            <b>{notification.kanbanName}</b> : undefined
+        }
       </p>
 
       <div className="notification-item-options">
-        <button onClick={handleDenyFriendRequest}>deny</button>
-        <button onClick={handleAcceptFriendRequest}>accept</button>
+        {
+          notification.notificationType === "friend request" ?
+            <>
+              <button onClick={handleDenyFriendRequest}>deny</button>
+              <button onClick={handleAcceptFriendRequest}>accept</button>
+            </> :
+            <button onClick={handleAcceptKanbanNotification}>accept</button>
+        }
       </div>
     </div>
   )
 }
 
 export const NotificationsPanel = () => {
-  const { myUser, loading, error } = useMyUser()
+  const { myUser } = useContext(UserContext)
 
   const [notifications, setNotifications] = useState([])
 
 
   useEffect(() => {
-    if (loading || error) {
+    if (!myUser) {
       return
     }
 
@@ -68,7 +92,7 @@ export const NotificationsPanel = () => {
         }
       })
       .catch(err => console.log(err))
-  }, [myUser, loading, error])
+  }, [myUser])
 
   const handleNotificationDelete = (notificationId) => {
     setNotifications(prev => {
@@ -83,10 +107,10 @@ export const NotificationsPanel = () => {
     <div className="notifications-panel">
       <div className="notifications-container">
         {
-          loading ? <p className="notification-alert">loading...</p> :
+          !myUser ? <p className="notification-alert">loading...</p> :
             notifications.length > 0 ?
               notifications.map((current, index) => (
-                <NotificationItem key={index} notification={current} notificationDeleted={handleNotificationDelete} />
+                <NotificationItem key={current._id} notification={current} notificationDeleted={handleNotificationDelete} />
               )) :
               <p className="notification-alert">Nothing new :/</p>
         }

@@ -1,16 +1,21 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import "../../stylesheets/routes/authentication_route/AuthenticationRoute.css"
 import MagicNote from "./MagicNote"
 import { useNavigate } from "react-router-dom"
+import useMyUser from "../../custom_hooks/useMyUser"
+import { UserContext } from "../../contexts/UserContext"
 
 const AuthenticationRoute = () => {
   const navigate = useNavigate()
+  const {setMyUser} = useContext(UserContext)
 
   const [authMethod, setAuthMethod] = useState(false) // false => login, true => signup
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+
+  const {getMyUser} = useMyUser()
 
 
   useEffect(() => {
@@ -45,6 +50,7 @@ const AuthenticationRoute = () => {
             console.log(res)
             localStorage.setItem("authToken", res.token)
             localStorage.setItem("user", JSON.stringify(res.user._id))
+            setMyUser(res.user)
             navigate("/")
           })
           .catch(error => console.log(error))
@@ -69,6 +75,7 @@ const AuthenticationRoute = () => {
         .then(res => {
           localStorage.setItem("authToken", res.token)
           localStorage.setItem("user", JSON.stringify(res.user._id))
+          setMyUser(res.user)
           navigate("/")
         })
         .catch(error => console.log(error))

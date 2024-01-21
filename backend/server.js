@@ -9,6 +9,7 @@ const { ObjectId } = mongoose.Types;
 const TaskSchema = require("./schemas/TaskSchema");
 const NoteSchema = require("./schemas/NoteSchema");
 const UserSchema = require("./schemas/UserSchema");
+const KanbanSchema = require("./schemas/KanbanSchema")
 
 const cors = require("cors");
 
@@ -89,17 +90,18 @@ app.patch("/api/edit_user", async (req, res) => {
     const user = await UserSchema.findOne({ _id: userId })
 
     // Actualizar amigos y notificaciones
-    if (user.username !== newUsername) {
+    if (user.username !== newUsername || user.profilePicture !== newProfilePicture) {
       // Buscar todos los documentos que contienen el nombre antiguo en la lista de amigos
       const friendsList = await UserSchema.find({
         'friends.username': user.username
       });
 
-      // Iterar sobre los documentos y actualizar el nombre en la lista de amigos
+      // Iterar sobre los documentos y actualizar username y profilePicture en la lista de amigos
       for (const currentFriend of friendsList) {
         currentFriend.friends.forEach(friend => {
           if (friend.username === user.username) {
             friend.username = newUsername;
+            friend.profilePicture = newProfilePicture
           }
         });
         // Iterar sobre los documentos y actualizar el nombre en la lista de notificaciones
@@ -108,12 +110,51 @@ app.patch("/api/edit_user", async (req, res) => {
             notification.from = newUsername;
           }
         });
-
         await currentFriend.save();
       }
 
+      // Iterar sobre los shared kanban y actualizar: 
+      // KanbanSchema.createdBy, KanbanSchema.members.username y KanbanSchema.tasks.createdBy
+      let sharedKanbans = await KanbanSchema.find({
+        $or: [
+          { createdBy: user.username },
+          { 'tasks.createdBy': user.username },
+          { 'members.username': user.username }
+        ]
+      });
+
+      sharedKanbans.forEach(async currentKanban => {
+        // KanbanSchema.createdBy
+        if (currentKanban.createdBy === user.username) {
+          currentKanban.createdBy = newUsername
+        }
+
+        // KanbanSchema.tasks.createdBy
+        if (currentKanban.tasks.filter(elem => elem.createdBy === user.username).length > 0) {
+          currentKanban.tasks.map(elem => {
+            if (elem.createdBy === user.username) {
+              elem.createdBy = newUsername
+            }
+            return elem
+          })
+        }
+
+        // KanbanSchema.members.username && KanbanSchema.members.profilePicture
+        if (currentKanban.members.filter(elem => elem.username === user.username).length > 0) {
+          currentKanban.members.map(elem => {
+            if (elem.username === user.username) {
+              elem.username = newUsername
+              elem.profilePicture = newProfilePicture
+            }
+            return elem
+          })
+        }
+        await currentKanban.save()
+      })
+
+      // Iterar sobre las notificaciones de user y cambiar "notification.to"
       user.notifications.forEach(notification => {
-        if(notification.to === user.username) {
+        if (notification.to === user.username) {
           notification.to === newUsername
         }
       })
@@ -150,11 +191,12 @@ app.get("/api/get_users_by_username/:username", async (req, res) => {
 app.get("/api/get_user_by_id/:id", async (req, res) => {
   try {
     const userId = req.params.id
-    const objectId = new ObjectId(userId)
+    
+    if (userId) {
+      const user = await UserSchema.findOne({ _id: userId })
 
-    const user = await UserSchema.findOne({ _id: objectId })
-
-    res.status(200).json({ user })
+      res.status(200).json({ user })
+    }
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);
@@ -165,7 +207,7 @@ app.get("/api/get_user_by_id/:id", async (req, res) => {
 
 //#region SOCIAL_OPTIONS
 
-app.post("/api/post_notification", async (req, res) => {
+app.post("/api/post_notification/friend_request", async (req, res) => {
   // las notificaciones de tipo "friend request" agregan inmediatamente al usuario como amigo, pero el estado es "pendiente",
   // por lo que no se muestra como amigo. Luego de que el otro usuario confirme la solicitud el estado pasa a ser "activo"
 
@@ -173,21 +215,101 @@ app.post("/api/post_notification", async (req, res) => {
     const notification = req.body
 
     let senderUser = await UserSchema.findOne({ username: notification.from })
-    let userTarget = await UserSchema.findOne({ username: notification.to })
+    let target = await UserSchema.findOne({ username: notification.to })
 
-    userTarget.notifications.push(notification)
+    console.log(senderUser)
+    console.log(target)
 
-    if (notification.notificationType === "friend request") {
-      const newFriendToSender = { username: userTarget.username, profilePicture: userTarget.profilePicture, state: "waiting" }
+    // En el caso de que ambos se envien la notificacion al mismo tiempo
+    // "mismo tiempo" => sin hacer refresh a la pagina
+    if (senderUser.notifications.filter(elem =>
+      elem.from === target.username && elem.notificationType === "friend request").length === 0) {
+      target.notifications.push(notification)
+
+      const newFriendToSender = { username: target.username, profilePicture: target.profilePicture, state: "waiting" }
       const newFriendToTarget = { username: senderUser.username, profilePicture: senderUser.profilePicture, state: "pending" }
 
-      userTarget.friends.push(newFriendToTarget)
+      target.friends.push(newFriendToTarget)
       senderUser.friends.push(newFriendToSender)
     }
-    await userTarget.save()
+
+    await target.save()
     await senderUser.save()
 
     res.status(200).json({ message: "request received successfully" })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.post("/api/post_notification/new_kanban", async (req, res) => {
+  try {
+    const { sender, targets, kanbanData } = req.body
+
+    let userSender = await UserSchema.findOne({ username: sender })
+    let userTargets = await Promise.all(targets.map(async current => {
+      return await UserSchema.findOne({ username: current });
+    }));
+
+    // Enviar notificacion y el kanban a todos los miembros
+    userTargets.forEach(async currentTarget => {
+      currentTarget.notifications.push({
+        from: sender,
+        to: currentTarget.username,
+        notificationType: "new kanban",
+        kanbanName: kanbanData.kanbanName
+      })
+      currentTarget.sharedKanban.push({
+        kanbanName: kanbanData.kanbanName,
+        kanbanImage: kanbanData.kanbanImage
+      })
+
+      return await currentTarget.save()
+    })
+
+    // Agregar el kanban a userSender
+    await userSender.sharedKanban.push({
+      kanbanName: kanbanData.kanbanName,
+      kanbanImage: kanbanData.kanbanImage
+    })
+
+    // Guardar documento
+    const newKanban = {
+      kanbanName: kanbanData.kanbanName,
+      kanbanDescription: kanbanData.kanbanDescription,
+      kanbanImage: kanbanData.kanbanImage,
+      members: kanbanData.members,
+      createdBy: kanbanData.createdBy,
+      tasks: []
+    }
+
+    const newKanbanDoc = new KanbanSchema(newKanban)
+    await newKanbanDoc.save()
+    const savedUserSender = await userSender.save()
+
+    res.status(200).json({ user: savedUserSender })
+
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.delete("/api/delete_notification/:userId/:notificationId", async (req, res) => {
+  try {
+    const { userId, notificationId } = req.params
+
+
+    let user = await UserSchema.findOne({ _id: userId })
+
+    console.log(user)
+
+    user.notifications = user.notifications.filter(elem => elem._id.toString() !== notificationId)
+    user = await user.save()
+
+    res.status(200).json({ user })
+
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);
@@ -374,9 +496,9 @@ app.delete("/api/delete_note/:note_id", async (req, res) => {
 
 app.post("/api/post_task", async (req, res) => {
   try {
-    const { task } = req.body;
+    const { task, createdBy } = req.body;
 
-    const newTaskSchema = new TaskSchema({ body: task });
+    const newTaskSchema = new TaskSchema({ createdBy, body: task, taskType: "personal" });
 
     const newTask = await newTaskSchema.save();
 
@@ -467,6 +589,74 @@ app.post("/api/edit_task", async (req, res) => {
 
     res.status(200).send("request received")
 
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.get("/api/get_shared_kanban/:kanbanName", async (req, res) => {
+  try {
+    const { kanbanName } = req.params
+
+    const kanban = await KanbanSchema.findOne({ kanbanName });
+
+    res.status(200).json({ kanban });
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+});
+
+app.post("/api/post_shared_task", async (req, res) => {
+  try {
+    const { task, kanbanName } = req.body;
+
+    const kanban = await KanbanSchema.findOne({ kanbanName })
+
+    kanban.tasks.push(task)
+
+    await kanban.save()
+
+    res.status(200).json({ kanban })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.get("/api/get_shared_task/:taskId/:kanbanName", async (req, res) => {
+  try {
+    const { taskId, kanbanName } = req.params
+
+    const kanban = await KanbanSchema.findOne({ kanbanName })
+
+    const task = kanban.tasks.filter(elem => elem._id.toString() === taskId)[0]
+
+    res.status(200).json({ task })
+  } catch (error) {
+    res.status(500).send("internal error has ocurred");
+    console.log(error);
+  }
+})
+
+app.patch("/api/change_shared_task_state", async (req, res) => {
+  try {
+    const { taskId, newState, kanbanName } = req.body
+
+    let kanban = await KanbanSchema.findOne({ kanbanName })
+    const taskIndex = kanban.tasks.findIndex(elem => elem._id.toString() === taskId)
+    let newTask = kanban.tasks[taskIndex]
+
+    if (newState === "toDo") newTask.state = "to-do"
+    else if (newState === "running") newTask.state = "running"
+    else newTask.state = "completed"
+
+    kanban.tasks[taskIndex] = newTask
+
+    await kanban.save()
+
+    res.status(200).send("request received")
   } catch (error) {
     res.status(500).send("internal error has ocurred");
     console.log(error);

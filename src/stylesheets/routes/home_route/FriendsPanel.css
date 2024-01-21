@@ -190,15 +190,14 @@
 .notification-sphere {
     position: absolute;
     top: 0;
-    left: 80px;
+    left: 90px;
     z-index: 3;
 
     width: 20px;
     height: 20px;
   
     border-radius: 50px;
-    background-color: rgb(247, 85, 85);
-    border: solid var(--color-0) 2px;
+    background-color: rgb(202, 55, 55);
   }
 
 
@@ -284,7 +283,10 @@
     width: 100%;
     margin: 0 !important;
 }
-
+.user-selected-create-kanban-button {
+    width: 200px !important;
+    height: 40px !important;
+}
 
 
 @media (max-width: 1150px) {

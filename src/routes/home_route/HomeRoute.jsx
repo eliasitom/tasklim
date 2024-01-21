@@ -3,6 +3,7 @@ import "../../stylesheets/routes/home_route/HomeRoute.css"
 
 import ProfilePanel from "./ProfilePanel";
 import FriendsPanel from "./FriendsPanel";
+import SharedKanbanPanel from "./SharedKanbanPanel"
 
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +21,7 @@ const HomeRoute = () => {
     <div className="home-route">
       <ProfilePanel />
       <FriendsPanel />
+      <SharedKanbanPanel />
     </div>);
 };
 

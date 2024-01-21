@@ -24,7 +24,12 @@ const userSchema = new Schema({
   notifications: [{
     from: String,
     to: String,
-    notificationType: String
+    notificationType: String,
+    kanbanName: String // notificationType === "new kanban" => String, else => undefined
+  }],
+  sharedKanban: [{
+    kanbanImage: Number,
+    kanbanName: String
   }]
 });
 

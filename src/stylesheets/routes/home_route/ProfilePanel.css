@@ -20,6 +20,7 @@
 }
 
 .profile-sections {
+    position: relative;
     display: flex;
     justify-content: space-around;
 
@@ -33,6 +34,15 @@
     font-size: 22px;
     color: rgba(0, 0, 0, 0.5);
     cursor: pointer;
+}
+.notification-icon {
+    position: absolute;
+    right: 50px;
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50px;
+    background-color: rgb(202, 55, 55);
 }
 .active-section {
     color: var(--color-0) !important;

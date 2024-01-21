@@ -1,4 +1,4 @@
-import "../../stylesheets/routes/tasks_route/Task.css";
+import "../../../stylesheets/routes/tasks_route/my_tasks/Task.css";
 
 import TaskModal from "./TaskModal";
 

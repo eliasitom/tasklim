@@ -1,8 +1,8 @@
-import "../../stylesheets/routes/tasks_route/TaskModal.css"
+import "../../../stylesheets/routes/tasks_route/my_tasks/TaskModal.css"
 
 import { ImCross  } from "react-icons/im";
 
-import avatar from "../../images/ProfilePicture0.png"
+import { ProfilePictures } from "../../../images/images";
 
 import { useState } from "react"
 
@@ -45,7 +45,7 @@ const TaskModal = ({ task, closeModal, taskChanged }) => {
         <body>
           <div className="task-modal-information">
             <div className="task-modal-user-information">
-              <img src={avatar} />
+              <img src={ProfilePictures[0]} />
               <p>Elias</p>
             </div>
             <p className="task-modal-secondary-information"><b>state:</b> {task.state}</p>

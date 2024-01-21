@@ -1,36 +1,11 @@
-import { useEffect, useState } from "react"
+import { useState, useContext } from "react"
 import "../../stylesheets/routes/home_route/FriendsPanel.css"
 
-import useMyUser from "../../custom_hooks/useMyUser"
+import { UserContext } from "../../contexts/UserContext.jsx"
 
+import NewKanbanModal from "../tasks_route/my_tasks/NewKanbanModal.jsx"
 
-import ProfilePicture0 from "../../images/ProfilePicture0.png"
-import ProfilePicture1 from "../../images/ProfilePicture1.png"
-import ProfilePicture2 from "../../images/ProfilePicture2.png"
-import ProfilePicture3 from "../../images/ProfilePicture3.png"
-import ProfilePicture4 from "../../images/ProfilePicture4.png"
-import ProfilePicture5 from "../../images/ProfilePicture5.png"
-import ProfilePicture6 from "../../images/ProfilePicture6.png"
-import ProfilePicture7 from "../../images/ProfilePicture7.png"
-import ProfilePicture8 from "../../images/ProfilePicture8.png"
-import ProfilePicture9 from "../../images/ProfilePicture9.png"
-import ProfilePicture10 from "../../images/ProfilePicture10.png"
-import genericProfilePicture from "../../images/ProfilePictureDefault.png"
-
-const profilePictures = [
-  ProfilePicture0,
-  ProfilePicture1,
-  ProfilePicture2,
-  ProfilePicture3,
-  ProfilePicture4,
-  ProfilePicture5,
-  ProfilePicture6,
-  ProfilePicture7,
-  ProfilePicture8,
-  ProfilePicture9,
-  ProfilePicture10,
-  genericProfilePicture
-]
+import { ProfilePictures, genericProfilePicture } from "../../images/images.jsx"
 
 
 
@@ -53,12 +28,10 @@ const isFriend = (myUser, user) => {
   }
 }
 
-
 const UserItem = ({ user, userSelected }) => {
-  const { myUser, loading, error } = useMyUser()
+  const { myUser } = useContext(UserContext)
 
-
-  if (loading) return (
+  if (!myUser) return (
     <div className="user-item no-friend">
       <img src={genericProfilePicture} />
       <p>loading...</p>
@@ -72,15 +45,81 @@ const UserItem = ({ user, userSelected }) => {
       onClick={userSelected}
     >
       {isFriend(myUser, user) && !isActiveFriend(myUser, user) ? <div className="notification-sphere" /> : undefined}
-      <img src={profilePictures[user.profilePicture]} />
+      <img src={ProfilePictures[user.profilePicture]} />
       <p>{user.username}</p>
     </div>
   )
 }
+const UserSelectedPanel = ({
+  myUser,
+  userSelected,
+  deniedUsers,
+  requestsSent,
+  handleAcceptFriend,
+  handleAddFriend,
+  handleDeleteFriend,
+  handleUserSelect }) => {
 
+  const [newKanban, setNewKanban] = useState(false)
+
+  return (
+    <div className="user-selected">
+      <div>
+        <img src={ProfilePictures[userSelected.profilePicture]} />
+        <p>{userSelected.username}</p>
+      </div>
+      <div>
+        {
+          myUser.friends.filter(elem => elem.username === userSelected.username && elem.state === "pending").length > 0 ?
+            <div className="user-selected-friend-request-resolution">
+              {
+                deniedUsers.includes(userSelected.username) ?
+                  <p>friend request denied</p> :
+                  <>
+                    <p>friend request</p>
+                    <div>
+                      <button onClick={handleDeleteFriend}>deny</button>
+                      <button onClick={handleAcceptFriend}>accept</button>
+                    </div>
+                  </>
+              }
+            </div>
+            : myUser.friends.filter(elem => elem.username === userSelected.username && elem.state === "waiting").length > 0 ?
+              <div className="user-selected-friend-request-resolution">
+                <p>friend request sent</p>
+              </div>
+              //Esta condicion es igual a la anterior, pero una es en tiempo real y la otra para cuando se actualiza la pagina
+              : requestsSent.includes(userSelected.username) ?
+                <div className="user-selected-friend-request-resolution">
+                  <p>friend request sent</p>
+                </div> :
+                isFriend(myUser, userSelected) && isActiveFriend(myUser, userSelected) ?
+                  <>
+                    <button
+                      className="user-selected-create-kanban-button"
+                      onClick={() => setNewKanban(true)}>
+                      new shared kanban
+                    </button>
+                  </> :
+                  <>
+                    <button onClick={() => handleUserSelect(null)}>cancel</button>
+                    <button onClick={handleAddFriend}>add friend</button>
+                  </>
+        }
+        {
+          newKanban ?
+            <NewKanbanModal
+              user1={myUser}
+              user2={userSelected}
+              close={() => setNewKanban(false)}
+            />
+            : undefined}
+      </div>
+    </div>
+  )
+}
 const FriendsPanel = () => {
-  const myUserObject = useMyUser();
-  const [myUser, setMyUser] = useState(null);
+  const { myUser, setMyUser } = useContext(UserContext)
 
   const [searchQuery, setSearchQuery] = useState("")
   const [searching, setSearching] = useState(false)
@@ -90,14 +129,6 @@ const FriendsPanel = () => {
   const [userSelected, setUserSelected] = useState(null)
   const [deniedUsers, setDeniedUsers] = useState([]) // Denied friend requests
   const [requestsSent, setRequestsSent] = useState([]) // Friend requests sent
-
-
-
-  useEffect(() => {
-    if (myUserObject.loading || myUser) return
-
-    setMyUser(myUserObject.myUser)
-  }, [myUserObject])
 
 
 
@@ -143,7 +174,7 @@ const FriendsPanel = () => {
     // el otro usuario confirme la solicitud el estado pasa a ser "activo"
     const notification = { from: myUser.username, to: userSelected.username, notificationType: "friend request" }
 
-    fetch("http://localhost:8000/api/post_notification", {
+    fetch("http://localhost:8000/api/post_notification/friend_request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(notification)
@@ -171,10 +202,9 @@ const FriendsPanel = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     })
-      .then(() => {
-        myUserObject.getMyUser()
-          .then(user => setMyUser(user))
-          .catch(error => console.log(error))
+      .then(response => response.json())
+      .then(res => {
+        setMyUser(res.user)
       })
   }
 
@@ -219,47 +249,16 @@ const FriendsPanel = () => {
           }
           {
             userSelected ?
-              <div className="user-selected">
-                <div>
-                  <img src={profilePictures[userSelected.profilePicture]} />
-                  <p>{userSelected.username}</p>
-                </div>
-                <div>
-                  {
-                    myUser.friends.filter(elem => elem.username === userSelected.username && elem.state === "pending").length > 0 ?
-                      <div className="user-selected-friend-request-resolution">
-                        {
-                          deniedUsers.includes(userSelected.username) ?
-                            <p>friend request denied</p> :
-                            <>
-                              <p>friend request</p>
-                              <div>
-                                <button onClick={handleDeleteFriend}>deny</button>
-                                <button onClick={handleAcceptFriend}>accept</button>
-                              </div>
-                            </>
-                        }
-                      </div>
-                      : myUser.friends.filter(elem => elem.username === userSelected.username && elem.state === "waiting").length > 0 ?
-                        <div className="user-selected-friend-request-resolution">
-                          <p>friend request sent</p>
-                        </div>
-                        //Esta condicion es igual a la anterior, pero una es en tiempo real y la otra para cuando se actualiza la pagina
-                        : requestsSent.includes(userSelected.username) ?
-                          <div className="user-selected-friend-request-resolution">
-                            <p>friend request sent</p>
-                          </div> :
-                          isFriend(myUser, userSelected) && isActiveFriend(myUser, userSelected) ?
-                            <>
-                              <p>current friend</p>
-                            </> :
-                            <>
-                              <button onClick={() => handleUserSelect(null)}>cancel</button>
-                              <button onClick={handleAddFriend}>add friend</button>
-                            </>
-                  }
-                </div>
-              </div>
+              <UserSelectedPanel
+                myUser={myUser}
+                userSelected={userSelected}
+                deniedUsers={deniedUsers}
+                requestsSent={requestsSent}
+                handleAcceptFriend={handleAcceptFriend}
+                handleAddFriend={handleAddFriend}
+                handleDeleteFriend={handleDeleteFriend}
+                handleUserSelect={handleUserSelect}
+              />
               : undefined
           }
         </div>
