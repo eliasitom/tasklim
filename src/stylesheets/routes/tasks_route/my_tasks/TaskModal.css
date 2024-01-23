@@ -1,0 +1,412 @@
+.task-modal-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.task-modal {
+    overflow: hidden;
+
+    width: 50%;
+    height: 400px;
+
+    background-color: var(--color-2);
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
+    border: solid rgb(40, 40, 40) 3px;
+    border-radius: 10px;
+    color: rgb(40, 40, 40);
+}
+
+.task-modal header {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0;
+    width: 100%;
+    height: 10%;
+
+    border-bottom: 3px solid rgb(40, 40, 40);
+    background-color: var(--color-2-hover);
+}
+
+.task-modal header svg {
+    cursor: pointer;
+    font-size: 22px;
+    margin-right: 20px;
+}
+
+
+.task-modal body {
+    width: 100%;
+    height: 90%;
+
+    display: flex;
+}
+
+.task-modal-information {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+
+    width: 40%;
+
+    border-right: solid rgb(40, 40, 40) 3px;
+}
+
+.task-modal-user-information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 20px 0 20px 20px;
+}
+
+.task-modal-user-information img {
+    width: 100px;
+    border-radius: 50%;
+    border: solid rgb(40, 40, 40) 3px;
+
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
+
+}
+
+.task-modal-user-information p {
+    font-size: 26px;
+    margin-left: 10px;
+}
+
+
+.task-modal-secondary-information {
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+
+
+
+
+
+.task-modal-body-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+
+    width: 60%;
+    height: 100%;
+}
+
+.task-modal-body {
+    width: 80%;
+    height: 60%;
+    margin: 0;
+    padding: 5px 5px 5px 5px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+}
+
+.task-modal-body-container div {
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: bold;
+    width: 80%;
+
+    margin-top: 20px;
+}
+
+.task-modal-body-container div:nth-child(3) {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 10px;
+}
+
+.task-modal-body-input {
+    width: 80%;
+    height: 60%;
+    margin: 0;
+    padding: 5px 5px 5px 5px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+    color: var(--color-0);
+}
+
+.task-modal-body-input::placeholder {
+    color: rgb(60, 60, 60);
+    font-size: 16px;
+}
+
+.task-modal-body-input::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 7px;
+}
+
+.task-modal-body-input::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+
+.task-modal-body-container button {
+    height: 40px;
+    width: 100px;
+    padding: 0 10px 0 10px;
+    margin-left: 5px;
+
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+
+}
+
+.task-modal-body-container button:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.task-modal-body-container button:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+
+
+/* SHARED TASK MODAL */
+
+.shared-task-modal-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shared-task-modal-colors-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    margin: 0 !important;
+}
+
+.shared-task-modal-color {
+    width: 30px !important;
+    height: 30px !important;
+
+    border-radius: 50% !important;
+    box-shadow: 0 5px 0 rgb(40, 40, 40);
+
+}
+
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(1) {
+    background-color: var(--color-2) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(1):hover {
+    background-color: var(--color-2-hover) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(2) {
+    background-color: var(--color-3) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(2):hover {
+    background-color: var(--color-3-hover) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(3) {
+    background-color: var(--color-4) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(3):hover {
+    background-color: var(--color-4-hover) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(4) {
+    background-color: var(--color-5) !important;
+}
+.shared-task-modal-colors-container .shared-task-modal-color:nth-child(4):hover {
+    background-color: var(--color-5-hover) !important;
+}
+
+.task-modal-delete-task {
+    height: 30px;
+    width: 130px;
+    padding: 0 10px 0 10px;
+    margin: 10px 0 5px 20px;
+
+    background-color: var(--color-1);
+    font-size: 16px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+
+}
+
+.task-modal-delete-task:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.task-modal-delete-task:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.task-modal-navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 10%;
+
+    border-bottom: solid 3px var(--color-0);
+}
+
+.task-modal-navbar p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 50%;
+    height: 100%;
+
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.task-modal-section-selected {
+    background-color: var(--color-2-hover);
+}
+
+.task-modal-comments-section {
+    width: 100%;
+    height: 90%;
+}
+
+.task-modal-comments-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    overflow-y: auto;
+
+    height: 80%;
+    width: 99%;
+}
+.task-modal-comments-container::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 7px;
+}
+
+.task-modal-comments-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.task-modal-comments-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 20%;
+}
+
+.task-modal-comments-form input {
+    width: 70%;
+    height: 40%;
+    margin: 0;
+    padding: 5px 5px 5px 5px;
+
+    background-color: var(--color-2-hover);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+}
+
+.task-modal-comments-form input::placeholder {
+    color: rgb(60, 60, 60);
+    font-size: 16px;
+}
+.task-modal-comments-form svg {
+    font-size: 28px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.comment-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 90%;
+    margin-top: 10px;
+    padding: 5px 5px 10px 5px;
+    
+    background-color: var(--color-2-hover);
+    border-radius: 10px;
+}
+.comment-item-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    width: 100%;
+}
+.comment-item-header img{
+    width: 40px;
+    margin-left: 10px;
+
+    border-radius: 50%;
+    border: solid rgb(40, 40, 40) 3px;
+    box-shadow: 0 3px 0 rgb(40, 40, 40);
+}
+.comment-item-header p {
+    margin-left: 5px;
+    font-size: 18px;
+
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.comment-item-header svg {
+    margin-left: 10px;
+
+    cursor: pointer;
+}
+.comment-item-body {
+    text-align: left;
+
+    width: 90%;
+    margin-left: 10px;
+    margin-top: 10px;
+}

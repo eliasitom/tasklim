@@ -1,0 +1,114 @@
+.auth-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+
+    margin-top: 50px;
+}
+
+.auth-form-main {
+    background-color: rgba(0, 0, 0, 0.1);
+
+    width: 500px;
+    height: 300px;
+    margin: 0 20px 20px 10px;
+
+    border-radius: 10px;
+}
+
+.auth-form-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+}
+.auth-method-title {
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 32px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.auth-method-switch {
+    margin: 10px 20px 0 0;
+
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    user-select: none;
+}
+.auth-method-switch:hover {
+    color: var(--color-0);
+}
+
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+
+    width: 60%;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.auth-form input {
+    padding: 0 5px 0 5px;
+    height: 30px;
+    margin-bottom: 10px;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.auth-form input::placeholder {
+    size: 18px;
+    color: rgb(60, 60, 60);
+}
+.auth-form button {
+    width: fit-content;
+    padding: 3px 30px 3px 30px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+}
+
+.auth-form button:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.auth-form button:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+
+
+@media (max-width: 800px ) {
+    .auth-form-main {
+        width: 90%;
+    }
+    .auth-main .note {
+        display: none;
+    }
+
+    .auth-form {
+        width: 80%;
+    }
+    .auth-form input {
+        width: 100%;
+    }
+}
+

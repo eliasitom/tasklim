@@ -1,0 +1,108 @@
+.tasks-route-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 25%;
+    height: 570px;
+    padding: 10px;
+    margin: 0 20px 0 0;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.tasks-route-container-title {
+    width: 95%;
+    height: 5%;
+
+    margin-bottom: 20px;
+
+    font-size: 26px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.4);
+}
+.tasks-route-container-tasks-cont {
+    height: 80%;
+    margin-bottom: 10px;
+    width: 100%;
+
+    overflow-y: auto;
+}
+.tasks-route-container-tasks-cont::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 10px;
+}
+.tasks-route-container-tasks-cont::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+.tasks-route-container-footer {
+    height: 10%;
+    width: 90%;
+    padding: 5px 20px 5px 20px;
+
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.tasks-route-container-footer form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    
+    height: 70%;
+}
+.tasks-route-container-footer p {
+    color: rgba(0, 0, 0, 0.5);
+
+    height: 30%;
+}
+.tasks-route-container-footer input {
+    padding: 0 5px 0 5px;
+    height: 80%;
+    width: 70%;
+    margin-left: 0;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+}
+.tasks-route-container-footer input::placeholder {
+    size: 18px;
+    color: rgba(0, 0, 0, 0.5);
+}
+.tasks-route-container-footer button {
+    height: 80%;
+    width: fit-content;
+    padding: 0 10px 0 10px;
+    margin-left: 5px;
+  
+    background-color: var(--color-1);
+    font-size: 18px;
+    border: solid rgb(60, 60, 60) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+
+}
+.tasks-route-container-footer button:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.tasks-route-container-footer button:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@media (max-width: 1150px) {
+    .tasks-route-container {
+        width: 90%;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+}
