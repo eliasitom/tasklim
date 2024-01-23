@@ -29,3 +29,46 @@
 
     width: 90%;
 }
+.notes-nav-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 20px;
+
+    margin-bottom: 20px;
+}
+.notes-nav-bar button {
+    margin: 0 15px 0 15px;
+    padding: 5px 15px 5px 15px;
+
+    background-color: rgb(40, 40, 40);
+    font-size: 18px;
+    border: solid rgb(40, 40, 40) 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: rgb(60, 60, 60);
+}
+.notes-nav-bar button:hover {
+    animation-name: button-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+.notes-nav-bar button:not(:hover) {
+    animation-name: button-not-hover1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@media (max-width: 660px) {
+    .notes-route {
+        align-items: center;
+    }
+    .notes-container {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}

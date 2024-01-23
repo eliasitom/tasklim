@@ -11,3 +11,10 @@
 }
 
 
+@media (max-width: 1150px) {
+    .tasks-route {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}

@@ -122,7 +122,7 @@ const Note = ({ data, pullNote }) => {
     fetch(`http://localhost:8000/api/delete_note/${data._id}`, {
       method: "DELETE"
     })
-      .then(() => pullNote())
+      .then(() => pullNote(data._id))
       .catch(err => console.log(err))
   }
 

@@ -51,13 +51,14 @@ app.post("/api/signup", async (req, res) => {
   }
 })
 app.post("/api/login", async (req, res) => {
+  console.log(1)
   try {
     const { username, password } = req.body
 
     const user = await UserSchema.findOne({ username })
 
     if (user.password === password) {
-      const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '24h' });
+      const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '48h' });
 
       res.status(200).json({ user, token })
     }
@@ -71,14 +72,16 @@ app.get("/api/verify_user/:token", async (req, res) => {
   try {
     const token = req.params.token
 
-    const decoded = jwt.verify(token, SECRET_KEY);
-    console.log(decoded)
-
+    jwt.verify(token, SECRET_KEY);
+    
+  
     res.status(200).json({ message: "valid token" })
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
+      console.log(error.name)
       res.json({ message: "expired token" })
     } else {
+      console.log(error)
       res.json({ message: "invalid token" })
     }
   }

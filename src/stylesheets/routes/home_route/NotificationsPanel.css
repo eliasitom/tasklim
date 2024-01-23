@@ -49,15 +49,13 @@
     border-radius: 10px;
 }
 .notification-item-body {
-    height: 60%;
-    font-size: 18px;
-    
+    font-size: 18px;    
 }
 .notification-item-options {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    height: 40%;
+    height: 35px;
 }
 
 .notification-item-options button {
@@ -87,8 +85,5 @@
 }
 
 @media (max-width: 1150px) {
-    .notifications-panel {
-        width: 90%;
-        margin-left: 0;
-    }
+    
 }

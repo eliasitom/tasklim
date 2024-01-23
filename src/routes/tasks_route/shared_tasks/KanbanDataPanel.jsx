@@ -90,8 +90,8 @@ const KanbanDataPanel = ({ kanban, closeModal, addMember, deleteMember, deleteKa
 
   if (!kanban || !myUser) return <p>loading...</p>
   return (
-    <div className="kanban-data-background">
-      <main className="kanban-data-main">
+    <div className="kanban-data-background" onClick={closeModal}>
+      <main className="kanban-data-main" onClick={e => e.stopPropagation()}>
         <header className="kanban-data-header">
           <h3 className="kanban-data-header-title">Admin panel</h3>
           <ImCross onClick={closeModal} />

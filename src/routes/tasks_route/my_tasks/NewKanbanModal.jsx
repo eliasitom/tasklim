@@ -96,8 +96,8 @@ const NewKanbanModal = ({ user2, close }) => {
   }
 
   return (
-    <div className="new-kanban-modal-background">
-      <main className="new-kanban-modal-main">
+    <div className="new-kanban-modal-background" onClick={close}>
+      <main className="new-kanban-modal-main" onClick={e => e.stopPropagation()}>
         <header className="new-kanban-modal-header">
           <h4>New shared kanban</h4>
           <ImCross onClick={close} />
@@ -119,6 +119,7 @@ const NewKanbanModal = ({ user2, close }) => {
                 placeholder="Ex: Task list for the construction of our new home..."
                 onChange={e => setKanbanDescription(e.target.value)}
                 value={kanbanDescription}
+                maxLength={170}
               />
             </label>
           </form>
@@ -159,7 +160,7 @@ const NewKanbanModal = ({ user2, close }) => {
           <div className="new-kanban-image-section">
             <h4>Kanban image:</h4>
             <p className="new-kanban-image-alert">Choose the image that best represents your project</p>
-            <div>
+            <div className="new-kanban-images-container">
               {
                 KanbanImages.map((current, index) => (
                   <img

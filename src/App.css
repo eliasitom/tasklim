@@ -100,11 +100,21 @@ header button:not(:hover) {
 }
 
 
-@media (max-width: 800px) {
+@media (max-width: 1150px) {
   header {
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+  header div {
+    display: flex;
+    margin: 0;
   }
   header h1 {
     margin: 0;
   }
+
 }

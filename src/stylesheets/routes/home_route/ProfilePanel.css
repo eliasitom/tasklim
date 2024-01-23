@@ -209,7 +209,6 @@
     header h1 {
       margin: 0;
     }
-
     .profile-picture {
         width: 20%;
         margin: 20px 0 10px 0;
@@ -218,4 +217,21 @@
         border: solid var(--color-0) 2px;
         box-shadow: 0 5px 0 var(--color-0);
     }
+    .profile-options {
+        width: 50%;
+    }
+  }
+  @media (max-width: 650px) {
+    .profile-picture {
+        width: 30%;
+    }
+    .profile-options {
+        width: 90%;
+    }
+  }
+  @media (max-width: 380px) {
+    .profile-picture {
+        width: 50%;
+    }
+
   }

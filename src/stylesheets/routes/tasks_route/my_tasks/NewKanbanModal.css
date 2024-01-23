@@ -203,10 +203,28 @@
 
     margin-top: 20px;
     margin-bottom: 20px;
+    width: 100%;
 }
 .new-kanban-image-section h4 {
     margin-top: 20px;
     margin-left: 20px;
+}
+.new-kanban-images-container {
+    width: 70%;
+    margin-left: 20px;
+    padding: 0 15px 15px 15px;
+
+    overflow: hidden;
+    overflow-x: scroll;
+}
+.new-kanban-images-container::-webkit-scrollbar{
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 10px;
+}
+.new-kanban-images-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 .new-kanban-image-alert {
     width: 70%;

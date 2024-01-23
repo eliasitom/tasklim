@@ -98,3 +98,11 @@
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
 }
+
+@media (max-width: 1150px) {
+    .tasks-route-container {
+        width: 90%;
+        margin: 0;
+        margin-bottom: 20px;
+    }
+}

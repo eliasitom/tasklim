@@ -55,7 +55,7 @@ const App = () => {
     else {
       return (
         <header>
-          <h1 onClick={handleTitleClick} style={{ cursor: "pointer" }}>Mini note</h1>
+          <h1 onClick={handleTitleClick} style={{ cursor: "pointer" }}>tasklim</h1>
 
           <div>
             <button

@@ -20,6 +20,16 @@ import KanbanImage3 from "./SharedTasks/image3.png"
 import KanbanImage4 from "./SharedTasks/image4.png"
 import KanbanImage5 from "./SharedTasks/image5.png"
 import KanbanImage6 from "./SharedTasks/image6.png"
+import KanbanImage7 from "./SharedTasks/image7.png"
+import KanbanImage8 from "./SharedTasks/image8.png"
+import KanbanImage9 from "./SharedTasks/image9.png"
+import KanbanImage10 from "./SharedTasks/image10.png"
+import KanbanImage11 from "./SharedTasks/image11.png"
+import KanbanImage12 from "./SharedTasks/image12.png"
+import KanbanImage13 from "./SharedTasks/image13.png"
+import KanbanImage14 from "./SharedTasks/image14.png"
+import KanbanImage15 from "./SharedTasks/image15.png"
+import KanbanImage16 from "./SharedTasks/image16.png"
 
 // Icons
 import AddIcon from "./Icons/AddIcon.png"
@@ -47,7 +57,17 @@ export const KanbanImages = [
   KanbanImage3,
   KanbanImage4,
   KanbanImage5,
-  KanbanImage6
+  KanbanImage6,
+  KanbanImage7,
+  KanbanImage8,
+  KanbanImage9,
+  KanbanImage10,
+  KanbanImage11,
+  KanbanImage12,
+  KanbanImage13,
+  KanbanImage14,
+  KanbanImage15,
+  KanbanImage16
 ]
 
 export const Icons = [

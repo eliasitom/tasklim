@@ -10,6 +10,9 @@ import { CSS } from "@dnd-kit/utilities";
 import moment from "moment";
 
 import { FaTrash, FaPalette, FaEdit } from "react-icons/fa";
+import { TiArrowDownThick, TiArrowUpThick } from "react-icons/ti";
+
+import useDimensions from "../../../custom_hooks/useDimensions";
 
 
 const mainColors = [
@@ -98,6 +101,8 @@ export default function SortableItem({ activeId, id, pullTask }) {
 
   const handleRef = React.useRef(null);
 
+  const { windowWidth } = useDimensions()
+
   const [taskData, setTaskData] = useState({});
   const [body, setBody] = useState("")
   const [color, setColor] = useState(0)
@@ -116,7 +121,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
     const newColor = (color + 1) % mainColors.length
     setColor(newColor)
     setTaskData(prev => {
-      return {...prev, color: newColor}
+      return { ...prev, color: newColor }
     })
 
     fetch("http://localhost:8000/api/edit_task", {
@@ -165,7 +170,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
 
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={windowWidth > 1150 ? setNodeRef : undefined} style={style}>
       {editMode ?
         <TaskModal
           task={taskData}
@@ -181,9 +186,10 @@ export default function SortableItem({ activeId, id, pullTask }) {
         }}
       >
         <div
-          ref={handleRef}
+          ref={windowWidth > 1150 ? handleRef : undefined}
           className="task-header"
-          {...attributes} {...listeners}
+          {...(windowWidth > 1150 ? attributes : undefined)}
+          {...(windowWidth > 1150 ? listeners : undefined)}
           style={{ backgroundColor: secondaryColors[color] }}
         >
         </div>
@@ -193,8 +199,20 @@ export default function SortableItem({ activeId, id, pullTask }) {
             <FaTrash onClick={() => pullTask(id)} />
             <FaPalette onClick={handleColor} />
             <FaEdit onClick={() => setEditMode(true)} />
+            {
+            windowWidth <= 1150 ?
+              <>
+                <TiArrowDownThick />
+                <TiArrowUpThick />
+              </>
+              : undefined
+          }
           </div>
-          <p className="task-footer-date">{taskData.createdAt}</p>
+          {
+            windowWidth > 1150 ?
+            <p className="task-footer-date">{taskData.createdAt}</p>
+            : undefined
+          }
         </div>
       </div>
     </div>
