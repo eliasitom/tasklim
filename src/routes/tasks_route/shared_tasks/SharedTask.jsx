@@ -2,14 +2,15 @@ import "../../../stylesheets/routes/tasks_route/my_tasks/Task.css"
 
 import TaskModal from "./SharedTaskModal";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import moment from "moment";
 
-import { FaTrash, FaPalette, FaEdit } from "react-icons/fa";
+import { UserContext } from "../../../contexts/userContext";
+import { ProfilePictures, genericProfilePicture } from "../../../images/images";
 
 
 const mainColors = [
@@ -26,15 +27,17 @@ const secondaryColors = [
 ];
 
 
-export function Item({ id, activeId , kanbanName}) {
+export function Item({ id, activeId, kanbanName }) {
   const [taskData, setTaskData] = useState({});
 
+  const { myUser } = useContext(UserContext)
+
   useEffect(() => {
-    if(!id || !kanbanName) return
+    if (!id || !kanbanName) return
 
     fetch(`http://localhost:8000/api/get_shared_task/${id}/${kanbanName}`, {
       method: "GET",
-      headers: {"Content-Type": "application/json"}
+      headers: { "Content-Type": "application/json" }
 
     })
       .then((response) => response.json())
@@ -53,6 +56,21 @@ export function Item({ id, activeId , kanbanName}) {
       .catch((err) => console.log(err));
   }, []);
 
+  if (!myUser || !taskData) return (
+    <div
+      className="task"
+      style={{
+        backgroundColor:
+          activeId && id === activeId ? "var(--color-2-hover)" : mainColors[taskData.color],
+      }}
+    >
+      <div className="task-header" style={{ cursor: "grabbing", backgroundColor: secondaryColors[taskData.color] }}>
+      </div>
+      <div className="task-footer">
+        <div className="task-options" />
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -67,11 +85,7 @@ export function Item({ id, activeId , kanbanName}) {
       <p className="task-body">{taskData.body}</p>
       <div className="task-footer">
         <div className="task-options">
-          <FaTrash onClick={() => console.log("delete")} />
-          <FaPalette />
-          <FaEdit />
         </div>
-        <p>{taskData.createdAt}</p>
       </div>
     </div>
   );
@@ -104,42 +118,21 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
 
   const handleRef = React.useRef(null);
 
-  const [taskData, setTaskData] = useState({});
+  const [taskData, setTaskData] = useState(null);
   const [body, setBody] = useState("")
   const [color, setColor] = useState(0)
-  const [animationMode, setAnimationMode] = useState(false)
 
-  const [editMode, setEditMode] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
 
+  const { myUser } = useContext(UserContext)
 
-
-  const handleColor = () => {
-    setAnimationMode(true)
-    setTimeout(() => {
-      setAnimationMode(false)
-    }, 200);
-
-    const newColor = (color + 1) % mainColors.length
-    setColor(newColor)
-
-    fetch("http://localhost:8000/api/edit_task", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        newBody: body,
-        newColor,
-        taskId: id,
-      }),
-    })
-      .catch((err) => console.log(err));
-  }
 
   useEffect(() => {
-    if(!id || !kanbanName) return
+    if (!id || !kanbanName) return
 
     fetch(`http://localhost:8000/api/get_shared_task/${id}/${kanbanName}`, {
       method: "GET",
-      headers: {"Content-Type": "application/json"}
+      headers: { "Content-Type": "application/json" }
     })
       .then((response) => response.json())
       .then((res) => {
@@ -151,6 +144,7 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
         setTaskData({
           ...res.task,
           createdAt: formatedDate,
+          comments: res.task.comments.reverse()
         });
         setColor(res.task.color)
         setBody(res.task.body)
@@ -158,28 +152,73 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
       .catch((err) => console.log(err));
   }, [id, kanbanName]);
 
-  const handleTaskChanged = (newBody) => {
+  const handleTaskChanged = (newBody, newColor) => {
     setBody(newBody)
+    setColor(newColor)
 
     let changedTask = taskData
     changedTask.body = newBody
+    changedTask.color = newColor
+
     setTaskData(changedTask)
 
-    setEditMode(false)
+    setModalOpen(false)
+  }
+
+  const handlePushComment = (newComment) => {
+    let changedTask = {...taskData}
+    changedTask.comments = [newComment, ...changedTask.comments]
+    setTaskData(changedTask)
+  }
+  
+  const handlePullComent = (commentId) => {
+    let changedTask = {...taskData}
+    changedTask.comments = changedTask.comments.filter(elem => elem._id !== commentId)
+    setTaskData(changedTask)
+
   }
 
 
+  if (!taskData || !myUser) return (
+    <div ref={setNodeRef} style={style}>
+      <div
+        className="task"
+        style={{
+          backgroundColor:
+            activeId && id === activeId ? secondaryColors[color] : mainColors[color],
+        }}
+      >
+        <div
+          ref={handleRef}
+          className="task-header"
+          {...attributes} {...listeners}
+          style={{ backgroundColor: secondaryColors[color] }}
+        >
+        </div>
+        <div className="task-footer">
+          <div className="task-options">
+            <img src={genericProfilePicture} className="task-footer-img" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div ref={setNodeRef} style={style}>
-      {editMode ?
+      {modalOpen ?
         <TaskModal
           task={taskData}
-          closeModal={() => setEditMode(false)}
+          closeModal={() => setModalOpen(false)}
+          kanbanName={kanbanName}
           taskChanged={handleTaskChanged}
+          pullTask={pullTask}
+          pushComment={handlePushComment}
+          pullComment={handlePullComent}
         />
         : undefined}
       <div
-        className={`task ${animationMode ? "note-shake" : ""}`}
+        className="task"
         style={{
           backgroundColor:
             activeId && id === activeId ? secondaryColors[color] : mainColors[color],
@@ -194,12 +233,11 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
         </div>
         <p className="task-body">{body}</p>
         <div className="task-footer">
-          <div className="task-options">
-            <FaTrash onClick={() => pullTask(id)} />
-            <FaPalette onClick={handleColor} />
-            <FaEdit onClick={() => setEditMode(true)} />
+          <div className="task-options" onClick={() => setModalOpen(true)}>
+            <img src={ProfilePictures[taskData.createdBy.profilePicture]} className="task-footer-img" />
+            <p className="task-footer-username">{taskData.createdBy.username}</p>
           </div>
-          <p>{taskData.createdAt}</p>
+          <p className="task-footer-date">{taskData.createdAt}</p>
         </div>
       </div>
     </div>

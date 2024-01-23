@@ -73,7 +73,7 @@ const NewKanbanModal = ({ user2, close }) => {
         kanbanImage: imageSelected,
         createdBy: myUser.username,
         members: members.map(elem => {
-          return { username: elem.username, profilePicture: elem.profilePicture }
+          return { username: elem.username, profilePicture: elem.profilePicture, activeMember: true }
         }),
       }
     }
@@ -110,6 +110,7 @@ const NewKanbanModal = ({ user2, close }) => {
                 placeholder="Ex: Our new home..."
                 onChange={e => setKanbanName(e.target.value)}
                 value={kanbanName}
+                maxLength={21}
               />
             </label>
             <label>
@@ -121,6 +122,7 @@ const NewKanbanModal = ({ user2, close }) => {
               />
             </label>
           </form>
+          <p className="new-kanban-alert">IMPORTANT: The name, description and image of the kanban cannot be changed once the kanban is created.</p>
           <div className="new-kanban-members">
             <div className="new-kanban-members-section">
               <h4>Members:</h4>
@@ -156,6 +158,7 @@ const NewKanbanModal = ({ user2, close }) => {
           </div>
           <div className="new-kanban-image-section">
             <h4>Kanban image:</h4>
+            <p className="new-kanban-image-alert">Choose the image that best represents your project</p>
             <div>
               {
                 KanbanImages.map((current, index) => (

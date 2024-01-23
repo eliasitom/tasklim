@@ -46,10 +46,6 @@
     border-radius: 10px;
 }
 
-.shared-kanban-panel-items-container .shared-kanban-item:nth-child(1) {
-    border-top: solid rgba(0, 0, 0, 0.3) 3px;
-}
-
 .shared-kanban-panel .shared-kanban-item:last-child {
     border-bottom: none;
 }
@@ -84,6 +80,7 @@
     font-size: 18px;
     font-weight: bold;
     text-transform: uppercase;
+    text-align: center;
 }
 
 .shared-kanban-no-items {

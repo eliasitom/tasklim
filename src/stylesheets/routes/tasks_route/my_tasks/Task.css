@@ -7,7 +7,7 @@
 
     width: 90%;
     min-height: 100px;
-    
+
     margin: 0 5px 20px 0;
 
     box-shadow: 0 5px 0 rgb(40, 40, 40);
@@ -15,6 +15,7 @@
     border-radius: 10px;
     color: rgb(40, 40, 40);
 }
+
 .task-header {
     margin: 0;
     width: 100%;
@@ -23,13 +24,14 @@
     border-bottom: 2px solid rgb(40, 40, 40);
     cursor: grab;
 }
+
 .task-body {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     overflow-y: auto;
 
-    min-height: 50px;
+    min-height: 70px;
     max-height: 150px;
     width: 90%;
     margin-top: 5px;
@@ -37,11 +39,13 @@
     word-break: break-word;
     white-space: pre-wrap;
 }
+
 .task-body::-webkit-scrollbar {
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     width: 7px;
 }
+
 .task-body::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
@@ -53,22 +57,52 @@
     align-items: center;
     justify-content: space-between;
 
-    height: 30px;
-    width: 90%;
+    height: 35px;
+    width: 100%;
     margin: 0;
-    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
-    color: rgba(0, 0, 0, 0.4);
+.task-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 10px;
 }
-.task-footer p {
+
+.task-footer-img {
+    height: 30px;
+
+    border-radius: 50%;
+    border: solid var(--color-0) 2px;
+
+    margin-right: 5px;
+    margin-left: 0;
+
+    cursor: pointer;
+}
+
+.task-footer-username {
+    color: var(--color-0);
     font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
 }
-.task-options svg{
+
+.task-footer-date {
+    color: rgba(0, 0, 0, 0.3);
+
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.task-options svg {
     font-size: 22px;
     margin-right: 10px;
 
     color: rgb(40, 40, 40);
     cursor: pointer;
     user-select: none;
-
 }

@@ -41,25 +41,25 @@ export const UserProvider = ({ children }) => {
 
   //#region NOTES
 
-  const getNotes = () => {
-    fetch("http://localhost:8000/api/get_notes", {
+  useEffect(() => {
+    if(!myUser) return
+
+    fetch(`http://localhost:8000/api/get_notes/${myUser.username}`, {
       method: "GET",
     })
       .then((response) => response.json())
       .then((res) => setNotes(res.notes))
       .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    getNotes();
-  }, []);
+  }, [myUser])
 
   //#endregion
 
   //#region TASKS
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/get_tasks", {
+    if(!myUser) return 
+
+    fetch(`http://localhost:8000/api/get_tasks/${myUser.username}`, {
       method: "GET"
     })
       .then(response => response.json())
@@ -75,7 +75,7 @@ export const UserProvider = ({ children }) => {
         });
       })
       .catch(err => console.log(err))
-  }, [])
+  }, [myUser])
 
   //#endregion
 

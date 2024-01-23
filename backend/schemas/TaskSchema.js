@@ -5,6 +5,10 @@ const taskSchema = new Schema({
     type: Date,
     default: Date.now()
   },
+  createdBy: {
+    username: String,
+    profilePicture: Number
+  },
   body: String,
   state: {
     type: String,

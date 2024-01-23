@@ -6,7 +6,21 @@ import { ProfilePictures } from "../../../images/images";
 
 import { useState } from "react"
 
+const mainColors = [
+  "rgb(225, 179, 88)",
+  "rgb(225, 88, 88)",
+  "rgb(145, 225, 88)",
+  "rgb(225, 88, 182)",
+];
+const secondaryColors = [
+  "rgb(207, 148, 81)",
+  "rgb(193, 76, 76)",
+  "rgb(141, 194, 76)",
+  "rgb(196, 76, 158)",
+];
+
 const TaskModal = ({ task, closeModal, taskChanged }) => {
+
   const [newBody, setNewBody] = useState(task.body)
 
   const handleCloseModal = (e) => {
@@ -37,21 +51,20 @@ const TaskModal = ({ task, closeModal, taskChanged }) => {
 
   return (
     <div className="task-modal-background" onClick={handleCloseModal}>
-      <div className="task-modal" onClick={e => e.stopPropagation()}>
-        <header>
-          <p>edit task</p>
+      <div className="task-modal" onClick={e => e.stopPropagation()} style={{backgroundColor: mainColors[task.color]}}>
+        <header style={{backgroundColor: secondaryColors[task.color]}}>
           <ImCross onClick={handleCloseModal}/>
         </header>
         <body>
           <div className="task-modal-information">
             <div className="task-modal-user-information">
-              <img src={ProfilePictures[0]} />
-              <p>Elias</p>
+              <img src={ProfilePictures[task.createdBy.profilePicture]} />
+              <p>{task.createdBy.username}</p>
             </div>
             <p className="task-modal-secondary-information"><b>state:</b> {task.state}</p>
             <p className="task-modal-secondary-information"><b>created at:</b> {task.createdAt}</p>
           </div>
-          <div className="task-modal-body">
+          <div className="task-modal-body-container">
             <div>
               <p>edit body</p>
             </div>
@@ -61,6 +74,7 @@ const TaskModal = ({ task, closeModal, taskChanged }) => {
             placeholder="The new body of your task here..."
             value={newBody}
             onChange={e => setNewBody(e.target.value)}
+            style={{backgroundColor: secondaryColors[task.color]}}
             />
             <div>
               <button onClick={handleSubmit}>submit</button>

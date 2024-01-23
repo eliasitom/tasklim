@@ -1,6 +1,6 @@
 import "../../../stylesheets/routes/tasks_route/my_tasks/TasksRoute.css"
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -17,6 +17,9 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import Container from "./SharedContainer";
 import { Item } from "./SharedTask";
 import KanbanPanel from "./KanbanPanel";
+import KanbanDataPanel from "./KanbanDataPanel";
+import { UserContext } from "../../../contexts/userContext";
+import useMyUser from "../../../custom_hooks/useMyUser";
 
 
 
@@ -51,9 +54,12 @@ const defaultAnnouncements = {
 
 export default function TasksRoute() {
   const navigate = useNavigate()
+  const { myUser, setMyUser } = useContext(UserContext)
+  const { getMyUser } = useMyUser()
 
   const { kanbanName } = useParams()
   const [kanban, setKanban] = useState()
+  const [adminPanel, setAdminPanel] = useState(false)
   const [items, setItems] = useState({
     toDo: [],
     running: [],
@@ -72,6 +78,13 @@ export default function TasksRoute() {
   }, [])
 
   useEffect(() => {
+    if (!myUser) return
+    if (myUser.sharedKanban.filter(elem => elem.kanbanName === kanbanName).length === 0) {
+      navigate("/")
+    }
+  }, [kanbanName, myUser])
+
+  useEffect(() => {
     fetch(`http://localhost:8000/api/get_shared_kanban/${kanbanName}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -81,7 +94,7 @@ export default function TasksRoute() {
         const kanban = res.kanban
 
         setKanban(res.kanban)
-        
+
         const tasksToDo = kanban.tasks.filter(current => current.state === "to-do")
         const tasksRunning = kanban.tasks.filter(current => current.state === "running")
         const tasksCompleted = kanban.tasks.filter(current => current.state === "completed")
@@ -114,7 +127,7 @@ export default function TasksRoute() {
   }
 
   const handlePullTask = (id, state) => {
-    fetch(`http://localhost:8000/api/delete_task/${id}`, {
+    fetch(`http://localhost:8000/api/delete_shared_task/${id}/${kanbanName}`, {
       method: "DELETE"
     })
       .then(() => {
@@ -129,9 +142,62 @@ export default function TasksRoute() {
       })
   }
 
+  const handleAddMember = (user) => {
+    fetch(`http://localhost:8000/api/post_notification/add_kanban_member`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kanbanName, newMember: user })
+    })
+      .then(response => response.json())
+      .then(res => {
+        console.log(res.kanbanSaved)
+        setKanban(res.kanbanSaved)
+      })
+      .catch(err => console.log(err))
+  }
+  const handleDeleteMember = (user) => {
+    fetch(`http://localhost:8000/api/delete_kanban_member/${user}/${kanbanName}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json())
+      .then(async (res) => {
+        if (user === myUser.username) {
+          navigate("/")
+          const newUser = await getMyUser()
+          setMyUser(newUser)
+        } else {
+          setKanban(res.kanbanSaved)
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
+  const handleDeleteKanban = () => {
+    fetch(`http://localhost:8000/api/delete_kanban/${kanbanName}`, {
+      method: "DELETE",
+    })
+      .then(async () => {
+        navigate("/")
+        const newUser = await getMyUser()
+        setMyUser(newUser)
+      })
+      .catch(err => console.log(err))
+  }
+
   return (
     <div className="tasks-route-main">
       <div className="tasks-route">
+        {
+          adminPanel ?
+            <KanbanDataPanel
+              kanban={kanban}
+              closeModal={() => setAdminPanel(false)}
+              addMember={handleAddMember}
+              deleteMember={handleDeleteMember}
+              deleteKanban={handleDeleteKanban}
+            />
+            : undefined
+        }
         <DndContext
           announcements={defaultAnnouncements}
           sensors={sensors}
@@ -162,7 +228,10 @@ export default function TasksRoute() {
             pullTask={id => handlePullTask(id, "completed")}
             kanban={kanban}
           />
-          <KanbanPanel kanban={kanban}/>
+          <KanbanPanel
+            kanban={kanban}
+            openAdminPanel={() => setAdminPanel(true)}
+          />
           <DragOverlay>{activeId ? <Item id={activeId} kanbanName={kanban.kanbanName} /> : null}</DragOverlay>
         </DndContext>
       </div>
@@ -211,7 +280,7 @@ export default function TasksRoute() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskId: activeId, newState: overContainer, kanbanName: kanban.kanbanName })
     })
-    .catch(err => console.log(err))
+      .catch(err => console.log(err))
 
 
     setItems((prev) => {

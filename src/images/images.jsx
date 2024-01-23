@@ -21,6 +21,9 @@ import KanbanImage4 from "./SharedTasks/image4.png"
 import KanbanImage5 from "./SharedTasks/image5.png"
 import KanbanImage6 from "./SharedTasks/image6.png"
 
+// Icons
+import AddIcon from "./Icons/AddIcon.png"
+
 
 export const ProfilePictures = [
     ProfilePicture0,
@@ -46,3 +49,8 @@ export const KanbanImages = [
   KanbanImage5,
   KanbanImage6
 ]
+
+export const Icons = [
+  AddIcon
+]
+

@@ -115,6 +115,9 @@ export default function SortableItem({ activeId, id, pullTask }) {
 
     const newColor = (color + 1) % mainColors.length
     setColor(newColor)
+    setTaskData(prev => {
+      return {...prev, color: newColor}
+    })
 
     fetch("http://localhost:8000/api/edit_task", {
       method: "POST",
@@ -160,6 +163,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
   }
 
 
+
   return (
     <div ref={setNodeRef} style={style}>
       {editMode ?
@@ -190,7 +194,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
             <FaPalette onClick={handleColor} />
             <FaEdit onClick={() => setEditMode(true)} />
           </div>
-          <p>{taskData.createdAt}</p>
+          <p className="task-footer-date">{taskData.createdAt}</p>
         </div>
       </div>
     </div>

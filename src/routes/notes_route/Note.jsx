@@ -1,9 +1,12 @@
 import "../../stylesheets/routes/note_route/Note.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { FaTrash, FaPalette, FaEdit } from "react-icons/fa";
+import { UserContext } from "../../contexts/userContext";
 
 const Note = ({ data, pullNote }) => {
+  const { setNotes } = useContext(UserContext)
+
   const [title, setTitle] = useState(data.title)
   const [body, setBody] = useState(data.body)
   const [color, setColor] = useState(data.color)
@@ -38,17 +41,26 @@ const Note = ({ data, pullNote }) => {
     const newColor = (color + 1) % mainColors.length
     setColor(newColor)
 
+    setNotes(prev => {
+      return prev.map(elem => {
+        if (elem._id === data._id) {
+          elem.color = newColor
+        }
+        return elem
+      })
+    })
+
     fetch("http://localhost:8000/api/edit_note", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            newTitle: title,
-            newBody: body,
-            newColor,
-            noteId: data._id,
-          }),
-        })
-        .catch((err) => console.log(err));
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        newTitle: title,
+        newBody: body,
+        newColor,
+        noteId: data._id,
+      }),
+    })
+      .catch((err) => console.log(err));
   };
 
   const handleChanges = (e) => {
@@ -66,15 +78,26 @@ const Note = ({ data, pullNote }) => {
             noteId: data._id,
           }),
         })
-        .then(response => response.json())
-        .then(res => {
-          setTitle(newTitle)
-          setBody(newBody)
-          setColor(color)
+          .then(response => response.json())
+          .then(res => {
+            setTitle(newTitle)
+            setBody(newBody)
+            setColor(color)
 
-          handleCancel()
-        })
-        .catch((err) => console.log(err));
+            handleCancel()
+
+            setNotes(prev => {
+              return prev.map(elem => {
+                if (elem._id === data._id) {
+                  elem.title = newTitle
+                  elem.body = newBody
+                  elem.color = color
+                }
+                return elem
+              })
+            })
+          })
+          .catch((err) => console.log(err));
       } else {
         alert("you must add a body");
       }
@@ -99,8 +122,8 @@ const Note = ({ data, pullNote }) => {
     fetch(`http://localhost:8000/api/delete_note/${data._id}`, {
       method: "DELETE"
     })
-    .then(() => pullNote())
-    .catch(err => console.log(err))
+      .then(() => pullNote())
+      .catch(err => console.log(err))
   }
 
 
@@ -120,9 +143,9 @@ const Note = ({ data, pullNote }) => {
           {body}
         </p>
         <div className="note-options">
-          <FaTrash onClick={handleDelete}/>
+          <FaTrash onClick={handleDelete} />
           <FaPalette onClick={handleColor} />
-          <FaEdit onClick={handleEditMode}/>
+          <FaEdit onClick={handleEditMode} />
         </div>
       </div>
     );

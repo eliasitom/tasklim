@@ -10,12 +10,16 @@ const kanbanSchema = new Schema({
   members: [
     {
       username: String,
-      profilePicture: Number
+      profilePicture: Number,
+      activeMember: Boolean
     }
   ],
   tasks: [
     {
-      createdBy: String,
+      createdBy: {
+        username: String,
+        profilePicture: Number
+      },
       createdAt: {
         type: Date,
         default: Date.now()
@@ -28,7 +32,16 @@ const kanbanSchema = new Schema({
       color: {
         type: Number,
         default: 0
-      }
+      },
+      comments: [
+        {
+          createdBy: {
+            username: String,
+            profilePicture: Number
+          },
+          body: String
+        }
+      ]
     }
   ],
   kanbanImage: {

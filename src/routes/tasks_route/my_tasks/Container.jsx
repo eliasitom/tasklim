@@ -26,7 +26,13 @@ export default function Container({ id, items, pushTask, activeId, pullTask }) {
       fetch("http://localhost:8000/api/post_task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task: newTask, createdBy: myUser.username })
+        body: JSON.stringify({
+          task: newTask,
+          createdBy: {
+            username: myUser.username,
+            profilePicture: myUser.profilePicture
+          }
+        })
       })
         .then(response => response.json())
         .then(res => {

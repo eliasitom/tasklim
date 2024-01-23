@@ -1,11 +1,10 @@
 import "../../../stylesheets/routes/tasks_route/KanbanPanel.css"
 
-import { useState } from "react"
-import { UserContext } from "../../../contexts/userContext"
+import { RiVipCrown2Fill } from "react-icons/ri";
 
 import { KanbanImages, ProfilePictures } from "../../../images/images"
 
-const KanbanPanel = ({ kanban }) => {
+const KanbanPanel = ({ kanban, openAdminPanel }) => {
 
   if (!kanban) return (
     <div className="kanban-panel" />
@@ -13,17 +12,26 @@ const KanbanPanel = ({ kanban }) => {
 
   return (
     <div className="kanban-panel">
-      <div className="kanban-panel-header">
+      <div className="kanban-panel-header" onClick={openAdminPanel}>
         <img src={KanbanImages[kanban.kanbanImage]} />
         <h1>{kanban.kanbanName}</h1>
       </div>
       <div className="kanban-panel-body">
         {
           kanban.members.map((current, index) => (
-            <div key={index} className="kanban-panel-member">
-              <img src={ProfilePictures[current.profilePicture]}/>
-              <p>{current.username}</p>
-            </div>
+              current.activeMember ?
+                <div key={index} className="kanban-panel-member">
+                  <img src={ProfilePictures[current.profilePicture]} />
+                  <p>
+                    {current.username}
+                    {
+                      kanban.createdBy === current.username ?
+                        <RiVipCrown2Fill className="kanban-panel-member-owner" />
+                        : undefined
+                    }
+                  </p>
+                </div>
+                : undefined
           ))
         }
       </div>

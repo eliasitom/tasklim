@@ -1,28 +1,38 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "../../stylesheets/routes/note_route/NoteForm.css";
+import { UserContext } from "../../contexts/userContext";
 
-const NoteForm = ({pushNote}) => {
+const NoteForm = ({ pushNote }) => {
+  const { myUser } = useContext(UserContext)
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
   const submitNote = (e) => {
     e.preventDefault();
-    
+
     if (title) {
       if (body) {
 
         fetch("http://localhost:8000/api/post_note", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, body }),
+          body: JSON.stringify({
+            title,
+            body,
+            createdBy: {
+              username: myUser.username,
+              profilePicture: myUser.profilePicture
+            }
+          }),
         })
-        .then(response => response.json())
-        .then(res => {
-          setTitle("")
-          setBody("")
-          pushNote(res.note)
-        })
-        .catch((err) => console.log(err));
+          .then(response => response.json())
+          .then(res => {
+            setTitle("")
+            setBody("")
+            pushNote(res.note)
+          })
+          .catch((err) => console.log(err));
       } else {
         alert("you must add a body");
       }

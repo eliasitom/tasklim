@@ -57,10 +57,31 @@ const UserSelectedPanel = ({
   requestsSent,
   handleAcceptFriend,
   handleAddFriend,
-  handleDeleteFriend,
-  handleUserSelect }) => {
+  handleDenyFriend,
+  handleUserSelect,
+  handleDeleteFriend }) => {
 
   const [newKanban, setNewKanban] = useState(false)
+
+  const [deleteFriendConfirm, setDeleteFriendConfirm] = useState(false)
+  const [confirmTimer, setConfirmTimer] = useState(3)
+
+
+  const confirmInterval = () => {
+    setDeleteFriendConfirm(true)
+    let timer = 3
+
+    const intervalRef = setInterval(() => {
+     timer--
+     setConfirmTimer(timer)
+     
+     if(timer < 1) {
+      setDeleteFriendConfirm(false)
+      setConfirmTimer(3)
+      clearInterval(intervalRef)
+     }
+    }, 1000);
+  }
 
   return (
     <div className="user-selected">
@@ -78,7 +99,7 @@ const UserSelectedPanel = ({
                   <>
                     <p>friend request</p>
                     <div>
-                      <button onClick={handleDeleteFriend}>deny</button>
+                      <button onClick={handleDenyFriend}>deny</button>
                       <button onClick={handleAcceptFriend}>accept</button>
                     </div>
                   </>
@@ -95,6 +116,22 @@ const UserSelectedPanel = ({
                 </div> :
                 isFriend(myUser, userSelected) && isActiveFriend(myUser, userSelected) ?
                   <>
+                    {
+                      !deleteFriendConfirm ? 
+                      <button
+                      className="user-selected-delete-friend-button"
+                      onClick={confirmInterval}
+                    >
+                      delete friend
+                    </button>
+                      : 
+                      <button
+                      className="user-selected-delete-friend-button"
+                      onClick={handleDeleteFriend}
+                    >
+                      confirm {confirmTimer}
+                    </button>
+                    }
                     <button
                       className="user-selected-create-kanban-button"
                       onClick={() => setNewKanban(true)}>
@@ -185,7 +222,7 @@ const FriendsPanel = () => {
       .catch(err => console.log(err))
   }
 
-  const handleDeleteFriend = () => {
+  const handleDenyFriend = () => {
     fetch(`http://localhost:8000/api/deny_friend_request/${myUser.username}/${userSelected.username}/undefined_notification_id`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" }
@@ -200,6 +237,17 @@ const FriendsPanel = () => {
   const handleAcceptFriend = () => {
     fetch(`http://localhost:8000/api/accept_friend_request/${myUser._id}/${userSelected._id}/undefined_notification_id`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(response => response.json())
+      .then(res => {
+        setMyUser(res.user)
+      })
+  }
+
+  const handleDeleteFriend = () => {
+    fetch(`http://localhost:8000/api/delete_friend/${myUser.username}/${userSelected.username}`, {
+      method: "DELETE",
       headers: { "Content-Type": "application/json" }
     })
       .then(response => response.json())
@@ -256,8 +304,9 @@ const FriendsPanel = () => {
                 requestsSent={requestsSent}
                 handleAcceptFriend={handleAcceptFriend}
                 handleAddFriend={handleAddFriend}
-                handleDeleteFriend={handleDeleteFriend}
+                handleDenyFriend={handleDenyFriend}
                 handleUserSelect={handleUserSelect}
+                handleDeleteFriend={handleDeleteFriend}
               />
               : undefined
           }

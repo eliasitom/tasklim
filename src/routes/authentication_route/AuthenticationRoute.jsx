@@ -15,8 +15,6 @@ const AuthenticationRoute = () => {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
 
-  const {getMyUser} = useMyUser()
-
 
   useEffect(() => {
     if (JSON.parse(localStorage.getItem("user")) !== null) {
@@ -39,6 +37,9 @@ const AuthenticationRoute = () => {
     e.preventDefault()
 
     if (username && password && confirmPassword) {
+      if(username.length < 3) return alert("Your username must contain more than three characters")
+      if(password.length < 7) return alert("The password is too short! Someone could steal your account D:")
+      
       if (password === confirmPassword) {
         fetch("http://localhost:8000/api/signup", {
           method: "POST",

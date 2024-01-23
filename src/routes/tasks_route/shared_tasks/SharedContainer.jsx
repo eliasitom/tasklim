@@ -10,7 +10,7 @@ import {
 
 import SortableItem from "./SharedTask";
 
-export default function Container({ id, items, activeId, pullTask, kanban }) {
+export default function Container({ id, items, activeId, pushTask, pullTask, kanban }) {
   const { myUser } = useContext(UserContext)
   const [newTask, setNewTask] = useState("")
 
@@ -23,7 +23,10 @@ export default function Container({ id, items, activeId, pullTask, kanban }) {
     e.preventDefault()
 
     const task = {
-      createdBy: myUser.username,
+      createdBy: {
+        username: myUser.username,
+        profilePicture: myUser.profilePicture
+      },
       body: newTask,
     }
 
@@ -35,6 +38,7 @@ export default function Container({ id, items, activeId, pullTask, kanban }) {
       })
         .then(response => response.json())
         .then(res => {
+          pushTask(res.newTask._id)
           setNewTask("")
         })
         .catch(err => console.log(err))
