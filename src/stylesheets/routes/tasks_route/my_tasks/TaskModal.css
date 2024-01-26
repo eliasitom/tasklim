@@ -61,7 +61,9 @@
 
     border-right: solid rgb(40, 40, 40) 3px;
 }
-
+.task-modal-navbar {
+    height: 35px !important;
+}
 .task-modal-user-information {
     display: flex;
     justify-content: center;
@@ -224,24 +226,31 @@
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(1) {
     background-color: var(--color-2) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(1):hover {
     background-color: var(--color-2-hover) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(2) {
     background-color: var(--color-3) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(2):hover {
     background-color: var(--color-3-hover) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(3) {
     background-color: var(--color-4) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(3):hover {
     background-color: var(--color-4-hover) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(4) {
     background-color: var(--color-5) !important;
 }
+
 .shared-task-modal-colors-container .shared-task-modal-color:nth-child(4):hover {
     background-color: var(--color-5-hover) !important;
 }
@@ -320,6 +329,7 @@
     height: 80%;
     width: 99%;
 }
+
 .task-modal-comments-container::-webkit-scrollbar {
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
@@ -357,6 +367,7 @@
     color: rgb(60, 60, 60);
     font-size: 16px;
 }
+
 .task-modal-comments-form svg {
     font-size: 28px;
     margin-left: 10px;
@@ -372,10 +383,11 @@
     width: 90%;
     margin-top: 10px;
     padding: 5px 5px 10px 5px;
-    
+
     background-color: var(--color-2-hover);
     border-radius: 10px;
 }
+
 .comment-item-header {
     display: flex;
     justify-content: flex-start;
@@ -383,7 +395,8 @@
 
     width: 100%;
 }
-.comment-item-header img{
+
+.comment-item-header img {
     width: 40px;
     margin-left: 10px;
 
@@ -391,6 +404,7 @@
     border: solid rgb(40, 40, 40) 3px;
     box-shadow: 0 3px 0 rgb(40, 40, 40);
 }
+
 .comment-item-header p {
     margin-left: 5px;
     font-size: 18px;
@@ -398,15 +412,63 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+
 .comment-item-header svg {
     margin-left: 10px;
 
     cursor: pointer;
 }
+
 .comment-item-body {
     text-align: left;
 
     width: 90%;
     margin-left: 10px;
     margin-top: 10px;
+}
+
+
+@media (max-width: 1250px) {
+    .task-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        border-radius: 0%;
+    }
+
+    .task-modal header {
+        align-items: flex-end;
+        justify-content: center;
+
+        height: 5%;
+    }
+
+    .task-modal body {
+        display: flex;
+        flex-direction: column !important;
+
+    }
+
+    .task-modal-information {
+        width: 100%;
+    }
+
+    .task-modal-body-container {
+        width: 100% !important;
+
+        align-items: flex-start;
+        margin-left: 20px;
+    }
+
+
+
+
+
+    .task-modal-comments-section {
+        height: 90% !important;
+    }
 }

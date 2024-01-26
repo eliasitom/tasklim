@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react"
 import "../../stylesheets/routes/authentication_route/AuthenticationRoute.css"
 import MagicNote from "./MagicNote"
 import { useNavigate } from "react-router-dom"
-import useMyUser from "../../custom_hooks/useMyUser"
 import { UserContext } from "../../contexts/UserContext"
 
 const AuthenticationRoute = () => {
@@ -19,7 +18,7 @@ const AuthenticationRoute = () => {
   useEffect(() => {
     if (JSON.parse(localStorage.getItem("user")) !== null) {
       const authToken = localStorage.getItem("authToken")
-      fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
+      fetch(`https://tasklim-server.onrender.com/api/verify_user/${authToken}`, {
         method: "GET"
       })
         .then(response => response.json())
@@ -41,7 +40,7 @@ const AuthenticationRoute = () => {
       if(password.length < 7) return alert("The password is too short! Someone could steal your account D:")
       
       if (password === confirmPassword) {
-        fetch("http://localhost:8000/api/signup", {
+        fetch("https://tasklim-server.onrender.com/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password })
@@ -67,7 +66,7 @@ const AuthenticationRoute = () => {
     e.preventDefault()
 
     if (username && password) {
-      fetch("http://localhost:8000/api/login", {
+      fetch("https://tasklim-server.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })

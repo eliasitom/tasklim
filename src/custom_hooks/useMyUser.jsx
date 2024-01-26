@@ -17,7 +17,7 @@ const useMyUser = () => {
     if (!userId) return
 
     // Devolvemos la promesa resultante de fetch
-    return fetch(`http://localhost:8000/api/get_user_by_id/${userId}`, {
+    return fetch(`https://tasklim-server.onrender.com/api/get_user_by_id/${userId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })

@@ -63,7 +63,7 @@ const ProfilePanel = () => {
 
   const submitChanges = (userId, newUsername_, newImage_) => {
     return new Promise((resolve, reject) => {
-      fetch("http://localhost:8000/api/edit_user", {
+      fetch("https://tasklim-server.onrender.com/api/edit_user", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,10 +109,10 @@ const ProfilePanel = () => {
         <h3 className="profile-username">Loading...</h3>
       </div>
       <div className="profile-options">
-        <button disabled={true} className="profile-logout">
+        <button disabled={true} className="profile-logout disabled">
           log out
         </button>
-        <button disabled={true} className="profile-enter-edit">
+        <button disabled={true} className="profile-enter-edit disabled">
           <MdEdit />
         </button>
       </div>

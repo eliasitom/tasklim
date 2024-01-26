@@ -10,7 +10,7 @@ import {
 
 import SortableItem from "./SharedTask";
 
-export default function Container({ id, items, activeId, pushTask, pullTask, kanban }) {
+export default function Container({ id, items, activeId, pushTask, pullTask, kanban, moveDown, moveUp }) {
   const { myUser } = useContext(UserContext)
   const [newTask, setNewTask] = useState("")
 
@@ -31,7 +31,7 @@ export default function Container({ id, items, activeId, pushTask, pullTask, kan
     }
 
     if (newTask) {
-      fetch("http://localhost:8000/api/post_shared_task", {
+      fetch("https://tasklim-server.onrender.com/api/post_shared_task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task, kanbanName: kanban.kanbanName })
@@ -61,7 +61,15 @@ export default function Container({ id, items, activeId, pushTask, pullTask, kan
         <p className="tasks-route-container-title">{id}</p>
         <div className="tasks-route-container-tasks-cont">
           {items.map((id) => (
-            <SortableItem key={id} id={id} activeId={activeId} pullTask={pullTask} kanbanName={kanban.kanbanName} />
+            <SortableItem 
+            key={id} 
+            id={id} 
+            activeId={activeId} 
+            pullTask={pullTask} 
+            kanbanName={kanban.kanbanName} 
+            moveUp={moveUp}
+            moveDown={moveDown}
+            />
           ))}
         </div>
         {id === "to-do" ? (

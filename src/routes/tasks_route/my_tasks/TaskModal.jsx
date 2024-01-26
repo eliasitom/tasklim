@@ -36,7 +36,7 @@ const TaskModal = ({ task, closeModal, taskChanged }) => {
         taskId: task._id
       }
 
-      fetch("http://localhost:8000/api/edit_task", {
+      fetch("https://tasklim-server.onrender.com/api/edit_task", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(newTask)

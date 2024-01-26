@@ -59,7 +59,8 @@ const UserSelectedPanel = ({
   handleAddFriend,
   handleDenyFriend,
   handleUserSelect,
-  handleDeleteFriend }) => {
+  handleDeleteFriend,
+  loading }) => {
 
   const [newKanban, setNewKanban] = useState(false)
 
@@ -72,14 +73,14 @@ const UserSelectedPanel = ({
     let timer = 3
 
     const intervalRef = setInterval(() => {
-     timer--
-     setConfirmTimer(timer)
-     
-     if(timer < 1) {
-      setDeleteFriendConfirm(false)
-      setConfirmTimer(3)
-      clearInterval(intervalRef)
-     }
+      timer--
+      setConfirmTimer(timer)
+
+      if (timer < 1) {
+        setDeleteFriendConfirm(false)
+        setConfirmTimer(3)
+        clearInterval(intervalRef)
+      }
     }, 1000);
   }
 
@@ -117,30 +118,36 @@ const UserSelectedPanel = ({
                 isFriend(myUser, userSelected) && isActiveFriend(myUser, userSelected) ?
                   <>
                     {
-                      !deleteFriendConfirm ? 
-                      <button
-                      className="user-selected-delete-friend-button"
-                      onClick={confirmInterval}
-                    >
-                      delete friend
-                    </button>
-                      : 
-                      <button
-                      className="user-selected-delete-friend-button"
-                      onClick={handleDeleteFriend}
-                    >
-                      confirm {confirmTimer}
-                    </button>
+                      !deleteFriendConfirm ?
+                        <button
+                          className="user-selected-delete-friend-button"
+                          onClick={confirmInterval}
+                        >
+                          delete friend
+                        </button>
+                        :
+                        <button
+                          className="user-selected-delete-friend-button"
+                          onClick={handleDeleteFriend}
+                        >
+                          confirm {confirmTimer}
+                        </button>
                     }
                     <button
                       className="user-selected-create-kanban-button"
                       onClick={() => setNewKanban(true)}>
-                      new shared kanban
+                      new kanban
                     </button>
                   </> :
                   <>
                     <button onClick={() => handleUserSelect(null)}>cancel</button>
-                    <button onClick={handleAddFriend}>add friend</button>
+                    <button
+                      disabled={loading}
+                      onClick={handleAddFriend}
+                      className={loading ? "disabled" : ""}
+                    >
+                      add friend
+                    </button>
                   </>
         }
         {
@@ -167,6 +174,7 @@ const FriendsPanel = () => {
   const [deniedUsers, setDeniedUsers] = useState([]) // Denied friend requests
   const [requestsSent, setRequestsSent] = useState([]) // Friend requests sent
 
+  const [loading, setLoading] = useState(false)
 
 
 
@@ -185,7 +193,7 @@ const FriendsPanel = () => {
     if (searchQuery) {
       setSearching(true)
 
-      fetch(`http://localhost:8000/api/get_users_by_username/${searchQuery}`, {
+      fetch(`https://tasklim-server.onrender.com/api/get_users_by_username/${searchQuery}`, {
         method: "GET"
       })
         .then(response => response.json())
@@ -211,19 +219,22 @@ const FriendsPanel = () => {
     // el otro usuario confirme la solicitud el estado pasa a ser "activo"
     const notification = { from: myUser.username, to: userSelected.username, notificationType: "friend request" }
 
-    fetch("http://localhost:8000/api/post_notification/friend_request", {
+    setLoading(true)
+
+    fetch("https://tasklim-server.onrender.com/api/post_notification/friend_request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(notification)
     })
       .then(() => {
         setRequestsSent(prev => [...prev, userSelected.username])
+        setLoading(false)
       })
       .catch(err => console.log(err))
   }
 
   const handleDenyFriend = () => {
-    fetch(`http://localhost:8000/api/deny_friend_request/${myUser.username}/${userSelected.username}/undefined_notification_id`, {
+    fetch(`https://tasklim-server.onrender.com/api/deny_friend_request/${myUser.username}/${userSelected.username}/undefined_notification_id`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" }
     })
@@ -235,7 +246,7 @@ const FriendsPanel = () => {
       .catch(err => console.log(err))
   }
   const handleAcceptFriend = () => {
-    fetch(`http://localhost:8000/api/accept_friend_request/${myUser._id}/${userSelected._id}/undefined_notification_id`, {
+    fetch(`https://tasklim-server.onrender.com/api/accept_friend_request/${myUser._id}/${userSelected._id}/undefined_notification_id`, {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     })
@@ -246,7 +257,7 @@ const FriendsPanel = () => {
   }
 
   const handleDeleteFriend = () => {
-    fetch(`http://localhost:8000/api/delete_friend/${myUser.username}/${userSelected.username}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_friend/${myUser.username}/${userSelected.username}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" }
     })
@@ -307,6 +318,7 @@ const FriendsPanel = () => {
                 handleDenyFriend={handleDenyFriend}
                 handleUserSelect={handleUserSelect}
                 handleDeleteFriend={handleDeleteFriend}
+                loading={loading}
               />
               : undefined
           }
@@ -318,7 +330,7 @@ const FriendsPanel = () => {
       <div className="friends-panel">
         <form className="friends-panel-form">
           <input placeholder="Search friends..." />
-          <button >search</button>
+          <button className="disabled">search</button>
         </form>
         <div className="friends-panel-body">
           <h4>Loading...</h4>

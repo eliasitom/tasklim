@@ -53,6 +53,7 @@ export default function TasksRoute() {
   const navigate = useNavigate()
 
   const { items, setItems } = useContext(UserContext)
+  const [newItems, setNewItems] = useState(null)
   const [activeId, setActiveId] = useState();
 
 
@@ -84,7 +85,7 @@ export default function TasksRoute() {
   }
 
   const handlePullTask = (id, state) => {
-    fetch(`http://localhost:8000/api/delete_task/${id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_task/${id}`, {
       method: "DELETE"
     })
       .then(() => {
@@ -98,6 +99,57 @@ export default function TasksRoute() {
         })
       })
   }
+
+  // {
+  //   toDo: [],
+  //   running: [],
+  //   completed: [],
+  // }
+
+  const handleMoveUp = (taskId, currentState) => {
+    const newItems_ = {
+      toDo: currentState === "running" ? [...items.toDo, taskId] : items.toDo,
+
+      running: currentState === "running" ?
+        { ...items }.running.filter(elem => elem !== taskId) :
+        currentState === "completed" ? [...items.running, taskId] : items.running,
+
+      completed: currentState === "completed" ?
+        { ...items }.completed.filter(elem => elem !== taskId) :
+        items.completed
+    }
+
+    setNewItems(newItems_)
+  }
+
+  const handleMoveDown = (taskId, currentState) => {
+    const newItems_ = {
+      toDo: currentState === "to-do" ? { ...items }.running.filter(elem => elem !== taskId) : items.toDo,
+
+      running: currentState === "running" ?
+        { ...items }.running.filter(elem => elem !== taskId) : currentState === "to-do" ?
+          [...items.running, taskId] :
+          items.running,
+
+      completed: currentState === "running" ? [...items.completed, taskId] : items.completed
+    }
+
+    setNewItems(newItems_)
+  }
+
+  useEffect(() => {
+    if (!newItems || !items) return
+
+    fetch("https://tasklim-server.onrender.com/api/change_task_state", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ oldTasks: items, newTasks: newItems })
+    })
+      .then(() => setItems(newItems))
+      .catch(err => console.log(err))
+  }, [newItems])
+
+
 
   return (
     <div className="tasks-route-main">
@@ -116,18 +168,24 @@ export default function TasksRoute() {
             activeId={activeId}
             pushTask={pushTask}
             pullTask={id => handlePullTask(id, "to-do")}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <Container
             id="running"
             items={items.running}
             activeId={activeId}
             pullTask={id => handlePullTask(id, "running")}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <Container
             id="completed"
             items={items.completed}
             activeId={activeId}
             pullTask={id => handlePullTask(id, "completed")}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
         </DndContext>
@@ -207,11 +265,12 @@ export default function TasksRoute() {
         ]
       }
 
-      fetch("http://localhost:8000/api/change_task_state", {
+      fetch("https://tasklim-server.onrender.com/api/change_task_state", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldTasks: prev, newTasks })
       })
+        .catch(err => console.log(err))
 
       return newTasks
     });

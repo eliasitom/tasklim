@@ -44,7 +44,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if(!myUser) return
 
-    fetch(`http://localhost:8000/api/get_notes/${myUser.username}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_notes/${myUser.username}`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -59,7 +59,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if(!myUser) return 
 
-    fetch(`http://localhost:8000/api/get_tasks/${myUser.username}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_tasks/${myUser.username}`, {
       method: "GET"
     })
       .then(response => response.json())

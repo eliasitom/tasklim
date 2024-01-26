@@ -65,10 +65,12 @@
 
 .task-options {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;    
     align-items: center;
 
+    width: 100%;
     margin-left: 10px;
+    margin-right: 10px;
 }
 
 .task-footer-img {
@@ -98,7 +100,7 @@
     margin-right: 10px;
 }
 
-.task-options svg {
+.task-options svg, .shared-task-options svg {
     font-size: 22px;
     margin-right: 10px;
 
@@ -106,3 +108,14 @@
     cursor: pointer;
     user-select: none;
 }
+
+
+@media (max-width: 1150px) {
+    .task-options {
+        width: 100%;
+        margin-right: 10px;
+        display: flex;
+        justify-content: space-between !important;
+    }
+}
+

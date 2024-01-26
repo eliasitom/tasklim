@@ -65,6 +65,8 @@ export default function TasksRoute() {
     running: [],
     completed: [],
   });
+  const [newItems, setNewItems] = useState(null)
+
 
   const [activeId, setActiveId] = useState();
 
@@ -85,7 +87,7 @@ export default function TasksRoute() {
   }, [kanbanName, myUser])
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/get_shared_kanban/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_shared_kanban/${kanbanName}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
@@ -127,7 +129,7 @@ export default function TasksRoute() {
   }
 
   const handlePullTask = (id, state) => {
-    fetch(`http://localhost:8000/api/delete_shared_task/${id}/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_shared_task/${id}/${kanbanName}`, {
       method: "DELETE"
     })
       .then(() => {
@@ -143,7 +145,7 @@ export default function TasksRoute() {
   }
 
   const handleAddMember = (user) => {
-    fetch(`http://localhost:8000/api/post_notification/add_kanban_member`, {
+    fetch(`https://tasklim-server.onrender.com/api/post_notification/add_kanban_member`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kanbanName, newMember: user })
@@ -156,7 +158,7 @@ export default function TasksRoute() {
       .catch(err => console.log(err))
   }
   const handleDeleteMember = (user) => {
-    fetch(`http://localhost:8000/api/delete_kanban_member/${user}/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_kanban_member/${user}/${kanbanName}`, {
       method: "DELETE",
     })
       .then(response => response.json())
@@ -173,7 +175,7 @@ export default function TasksRoute() {
   }
 
   const handleDeleteKanban = () => {
-    fetch(`http://localhost:8000/api/delete_kanban/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_kanban/${kanbanName}`, {
       method: "DELETE",
     })
       .then(async () => {
@@ -183,6 +185,64 @@ export default function TasksRoute() {
       })
       .catch(err => console.log(err))
   }
+
+  const handleMoveUp = (taskId, currentState) => {
+    const newItems_ = {
+      toDo: currentState === "running" ? [...items.toDo, taskId] : items.toDo,
+
+      running: currentState === "running" ?
+        { ...items }.running.filter(elem => elem !== taskId) :
+        currentState === "completed" ? [...items.running, taskId] : items.running,
+
+      completed: currentState === "completed" ?
+        { ...items }.completed.filter(elem => elem !== taskId) :
+        items.completed
+    }
+
+    let newState;
+    if(currentState === "completed") newState = "running"
+    else if(currentState === "running") newState = "to-do"
+    else newState = "to-do"
+
+    console.log({currentState, newState})
+
+    fetch("https://tasklim-server.onrender.com/api/change_shared_task_state", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskId, newState, kanbanName })
+    })
+      .then(() => setItems(newItems_))
+      .catch(err => console.log(err))
+
+  }
+
+  const handleMoveDown = (taskId, currentState) => {
+    const newItems_ = {
+      toDo: currentState === "to-do" ? { ...items }.toDo.filter(elem => elem !== taskId) : items.toDo,
+
+      running: currentState === "running" ?
+        { ...items }.running.filter(elem => elem !== taskId) : currentState === "to-do" ?
+          [...items.running, taskId] :
+          items.running,
+
+      completed: currentState === "running" ? [...items.completed, taskId] : items.completed
+    }
+
+    let newState;
+    if(currentState === "to-do") newState = "running"
+    else if(currentState === "running") newState = "completed"
+    else newState = "completed"
+
+    fetch("https://tasklim-server.onrender.com/api/change_shared_task_state", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskId, newState, kanbanName })
+    })
+      .then(() => setItems(newItems_))
+      .catch(err => console.log(err))
+  }
+
+
 
   return (
     <div className="tasks-route-main">
@@ -213,6 +273,8 @@ export default function TasksRoute() {
             pushTask={pushTask}
             pullTask={id => handlePullTask(id, "to-do")}
             kanban={kanban}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <Container
             id="running"
@@ -220,6 +282,8 @@ export default function TasksRoute() {
             activeId={activeId}
             pullTask={id => handlePullTask(id, "running")}
             kanban={kanban}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <Container
             id="completed"
@@ -227,6 +291,8 @@ export default function TasksRoute() {
             activeId={activeId}
             pullTask={id => handlePullTask(id, "completed")}
             kanban={kanban}
+            moveDown={handleMoveDown}
+            moveUp={handleMoveUp}
           />
           <KanbanPanel
             kanban={kanban}
@@ -275,7 +341,7 @@ export default function TasksRoute() {
     }
 
     // Change task state with fetching
-    fetch("http://localhost:8000/api/change_shared_task_state", {
+    fetch("https://tasklim-server.onrender.com/api/change_shared_task_state", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskId: activeId, newState: overContainer, kanbanName: kanban.kanbanName })

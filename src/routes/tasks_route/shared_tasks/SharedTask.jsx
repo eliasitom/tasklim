@@ -3,6 +3,7 @@ import "../../../stylesheets/routes/tasks_route/my_tasks/Task.css"
 import TaskModal from "./SharedTaskModal";
 
 import React, { useContext, useEffect, useState } from "react";
+import { TiArrowDownThick, TiArrowUpThick } from "react-icons/ti";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -11,6 +12,7 @@ import moment from "moment";
 
 import { UserContext } from "../../../contexts/userContext";
 import { ProfilePictures, genericProfilePicture } from "../../../images/images";
+import useDimensions from "../../../custom_hooks/useDimensions";
 
 
 const mainColors = [
@@ -35,7 +37,7 @@ export function Item({ id, activeId, kanbanName }) {
   useEffect(() => {
     if (!id || !kanbanName) return
 
-    fetch(`http://localhost:8000/api/get_shared_task/${id}/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_shared_task/${id}/${kanbanName}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
 
@@ -97,7 +99,7 @@ export function Item({ id, activeId, kanbanName }) {
 
 
 
-export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
+export default function SortableItem({ activeId, id, pullTask, kanbanName, moveDown, moveUp }) {
   const {
     attributes,
     listeners,
@@ -125,12 +127,13 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const { myUser } = useContext(UserContext)
+  const { windowWidth } = useDimensions()
 
 
   useEffect(() => {
     if (!id || !kanbanName) return
 
-    fetch(`http://localhost:8000/api/get_shared_task/${id}/${kanbanName}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_shared_task/${id}/${kanbanName}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })
@@ -166,16 +169,23 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
   }
 
   const handlePushComment = (newComment) => {
-    let changedTask = {...taskData}
+    let changedTask = { ...taskData }
     changedTask.comments = [newComment, ...changedTask.comments]
     setTaskData(changedTask)
   }
-  
+
   const handlePullComent = (commentId) => {
-    let changedTask = {...taskData}
+    let changedTask = { ...taskData }
     changedTask.comments = changedTask.comments.filter(elem => elem._id !== commentId)
     setTaskData(changedTask)
 
+  }
+
+  const handleMoveUp = () => {
+    moveUp(id, taskData.state)
+  }
+  const handleMoveDown = () => {
+    moveDown(id, taskData.state)
   }
 
 
@@ -205,7 +215,7 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
   )
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={windowWidth > 1150 ? setNodeRef : undefined} style={style}>
       {modalOpen ?
         <TaskModal
           task={taskData}
@@ -225,19 +235,37 @@ export default function SortableItem({ activeId, id, pullTask, kanbanName }) {
         }}
       >
         <div
-          ref={handleRef}
+          ref={windowWidth > 1150 ? handleRef : undefined}
           className="task-header"
-          {...attributes} {...listeners}
+          {...(windowWidth > 1150 ? attributes : undefined)}
+          {...(windowWidth > 1150 ? listeners : undefined)}
           style={{ backgroundColor: secondaryColors[color] }}
         >
         </div>
         <p className="task-body">{body}</p>
         <div className="task-footer">
-          <div className="task-options" onClick={() => setModalOpen(true)}>
-            <img src={ProfilePictures[taskData.createdBy.profilePicture]} className="task-footer-img" />
-            <p className="task-footer-username">{taskData.createdBy.username}</p>
+          <div className="task-options">
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src={ProfilePictures[taskData.createdBy.profilePicture]}
+                className="task-footer-img"
+                onClick={() => setModalOpen(true)}
+              />
+              <p
+                className="task-footer-username"
+                onClick={() => setModalOpen(true)}>
+                {taskData.createdBy.username}
+              </p>
+            </div>
+            {
+              windowWidth > 1150 ?
+                <p className="task-footer-date">{taskData.createdAt}</p> :
+                <div >
+                  <TiArrowDownThick onClick={handleMoveDown} />
+                  <TiArrowUpThick onClick={handleMoveUp} />
+                </div>
+            }
           </div>
-          <p className="task-footer-date">{taskData.createdAt}</p>
         </div>
       </div>
     </div>

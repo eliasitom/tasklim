@@ -18,6 +18,11 @@ header h1 {
   color: rgb(53, 53, 53);
 }
 
+.disabled {
+  opacity: 0.5;
+}
+
+
 
 header div {
   display: flex;

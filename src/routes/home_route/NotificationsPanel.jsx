@@ -8,8 +8,10 @@ import { UserContext } from "../../contexts/userContext.jsx";
 const NotificationItem = ({ notification, notificationDeleted }) => {
   const { myUser, setMyUser } = useContext(UserContext)
 
+  const [loading, setLoaging] = useState(false)
+
   const handleDenyFriendRequest = () => {
-    fetch(`http://localhost:8000/api/deny_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/deny_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
       method: "DELETE"
     })
       .then(response => response.json())
@@ -20,7 +22,9 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
       .cath(err => console.log(err))
   }
   const handleAcceptFriendRequest = () => {
-    fetch(`http://localhost:8000/api/accept_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
+    setLoaging(true)
+
+    fetch(`https://tasklim-server.onrender.com/api/accept_friend_request/${notification.to}/${notification.from}/${notification._id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     })
@@ -28,12 +32,13 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
       .then(res => {
         setMyUser(res.user)
         notificationDeleted(notification._id)
+        setLoaging(false)
       })
       .catch(err => console.log(err))
   }
 
   const handleAcceptKanbanNotification = () => {
-    fetch(`http://localhost:8000/api/delete_notification/${myUser._id}/${notification._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_notification/${myUser._id}/${notification._id}`, {
       method: "DELETE",
     })
       .then(response => response.json())
@@ -45,7 +50,9 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
   }
 
   const handleAcceptKanbanInvitation = () => {
-    fetch(`http://localhost:8000/api/accept_kanban_invitation`, {
+    setLoaging(true)
+
+    fetch(`https://tasklim-server.onrender.com/api/accept_kanban_invitation`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -57,12 +64,13 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
       .then(response => response.json())
       .then((res) => {
         setMyUser(res.user)
+        setLoaging(false)
       })
       .catch(err => console.log(err))
   }
 
   const handleDenyKanbanInvitation = () => {
-    fetch(`http://localhost:8000/api/deny_kanban_invitation/${notification.kanbanName}/${myUser.username}/${notification._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/deny_kanban_invitation/${notification.kanbanName}/${myUser.username}/${notification._id}`, {
       method: "DELETE",
     })
       .then(() => {
@@ -111,8 +119,8 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
     if (type === "friend request") {
       return (
         <>
-          <button onClick={handleDenyFriendRequest}>deny</button>
-          <button onClick={handleAcceptFriendRequest}>accept</button>
+          <button onClick={handleDenyFriendRequest} >deny</button>
+          <button onClick={handleAcceptFriendRequest} disabled={loading} className={loading ? "disabled" : ""}>accept</button>
         </>
       )
     } else if (
@@ -123,8 +131,8 @@ const NotificationItem = ({ notification, notificationDeleted }) => {
     } else if (type === "kanban invitation request") {
       return (
         <>
-          <button onClick={handleDenyKanbanInvitation}>deny</button>
-          <button onClick={handleAcceptKanbanInvitation}>accept</button>
+          <button onClick={handleDenyKanbanInvitation} >deny</button>
+          <button onClick={handleAcceptKanbanInvitation} disabled={loading} className={loading ? "disabled" : ""}>accept</button>
         </>
       )
     }
@@ -162,7 +170,7 @@ export const NotificationsPanel = () => {
       return
     }
 
-    fetch(`http://localhost:8000/api/get_notifications/${myUser._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_notifications/${myUser._id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     })

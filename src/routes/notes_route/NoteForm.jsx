@@ -14,7 +14,7 @@ const NoteForm = ({ pushNote }) => {
     if (title) {
       if (body) {
 
-        fetch("http://localhost:8000/api/post_note", {
+        fetch("https://tasklim-server.onrender.com/api/post_note", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

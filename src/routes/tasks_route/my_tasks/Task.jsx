@@ -33,7 +33,7 @@ export function Item({ id, activeId }) {
   const [taskData, setTaskData] = useState({});
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/get_task/${id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/get_task/${id}`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -80,7 +80,7 @@ export function Item({ id, activeId }) {
 
 
 
-export default function SortableItem({ activeId, id, pullTask }) {
+export default function SortableItem({ activeId, id, pullTask, moveUp, moveDown }) {
   const {
     attributes,
     listeners,
@@ -124,7 +124,7 @@ export default function SortableItem({ activeId, id, pullTask }) {
       return { ...prev, color: newColor }
     })
 
-    fetch("http://localhost:8000/api/edit_task", {
+    fetch("https://tasklim-server.onrender.com/api/edit_task", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -137,7 +137,8 @@ export default function SortableItem({ activeId, id, pullTask }) {
   }
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/get_task/${id}`, {
+    console.log("obteniendo taskData")
+    fetch(`https://tasklim-server.onrender.com/api/get_task/${id}`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -165,6 +166,14 @@ export default function SortableItem({ activeId, id, pullTask }) {
     setTaskData(changedTask)
 
     setEditMode(false)
+  }
+
+
+  const handleMoveUp = () => {
+    moveUp(id, taskData.state)
+  }
+  const handleMoveDown = () => {
+    moveDown(id, taskData.state)
   }
 
 
@@ -196,22 +205,24 @@ export default function SortableItem({ activeId, id, pullTask }) {
         <p className="task-body">{body}</p>
         <div className="task-footer">
           <div className="task-options">
-            <FaTrash onClick={() => pullTask(id)} />
-            <FaPalette onClick={handleColor} />
-            <FaEdit onClick={() => setEditMode(true)} />
+            <div>
+              <FaTrash onClick={() => pullTask(id)} />
+              <FaPalette onClick={handleColor} />
+              <FaEdit onClick={() => setEditMode(true)} />
+            </div>
             {
-            windowWidth <= 1150 ?
-              <>
-                <TiArrowDownThick />
-                <TiArrowUpThick />
-              </>
-              : undefined
-          }
+              windowWidth <= 1150 ?
+                <div>
+                  <TiArrowDownThick onClick={handleMoveDown} />
+                  <TiArrowUpThick onClick={handleMoveUp} />
+                </div>
+                : undefined
+            }
           </div>
           {
             windowWidth > 1150 ?
-            <p className="task-footer-date">{taskData.createdAt}</p>
-            : undefined
+              <p className="task-footer-date">{taskData.createdAt}</p>
+              : undefined
           }
         </div>
       </div>

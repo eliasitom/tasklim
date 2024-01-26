@@ -22,7 +22,7 @@ const App = () => {
       navigate("/auth")
     } else {
       const authToken = localStorage.getItem("authToken")
-      fetch(`http://localhost:8000/api/verify_user/${authToken}`, {
+      fetch(`https://tasklim-server.onrender.com/api/verify_user/${authToken}`, {
         method: "GET"
       })
         .then(response => response.json())
@@ -48,7 +48,7 @@ const App = () => {
     if (window.location.pathname === "/auth") {
       return (
         <header>
-          <h1>Mini note</h1>
+          <h1>tasklim</h1>
         </header>
       )
     }

@@ -50,7 +50,7 @@ const Note = ({ data, pullNote }) => {
       })
     })
 
-    fetch("http://localhost:8000/api/edit_note", {
+    fetch("https://tasklim-server.onrender.com/api/edit_note", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -68,7 +68,7 @@ const Note = ({ data, pullNote }) => {
 
     if (newTitle) {
       if (newBody) {
-        fetch("http://localhost:8000/api/edit_note", {
+        fetch("https://tasklim-server.onrender.com/api/edit_note", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -119,7 +119,7 @@ const Note = ({ data, pullNote }) => {
   }
 
   const handleDelete = () => {
-    fetch(`http://localhost:8000/api/delete_note/${data._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_note/${data._id}`, {
       method: "DELETE"
     })
       .then(() => pullNote(data._id))

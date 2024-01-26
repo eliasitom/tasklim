@@ -8,6 +8,7 @@ import { ProfilePictures } from "../../../images/images";
 
 import { useContext, useState } from "react"
 import { UserContext } from "../../../contexts/userContext";
+import useDimensions from "../../../custom_hooks/useDimensions"
 
 
 const mainColors = [
@@ -27,7 +28,7 @@ const secondaryColors = [
 const CommentItem = ({ comment, newColor, myUser, kanbanName, taskId, pullComment }) => {
 
   const handleDelete = () => {
-    fetch(`http://localhost:8000/api/delete_shared_task_comment/${kanbanName}/${taskId}/${comment._id}`, {
+    fetch(`https://tasklim-server.onrender.com/api/delete_shared_task_comment/${kanbanName}/${taskId}/${comment._id}`, {
       method: "DELETE"
     })
       .then(() => {
@@ -55,6 +56,7 @@ const CommentItem = ({ comment, newColor, myUser, kanbanName, taskId, pullCommen
 
 const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushComment, pullComment }) => {
   const { myUser } = useContext(UserContext)
+  const { windowWidth } = useDimensions()
 
   const [newBody, setNewBody] = useState(task.body)
   const [newColor, setNewColor] = useState(task.color)
@@ -78,7 +80,7 @@ const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushCo
   }
 
   const handleSubmit = () => {
-    fetch("http://localhost:8000/api/edit_shared_task", {
+    fetch("https://tasklim-server.onrender.com/api/edit_shared_task", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -110,10 +112,10 @@ const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushCo
 
   const handleComment = (e) => {
     e.preventDefault()
-    
-    if(!comment) return alert("you can't send empty comments")
 
-    fetch("http://localhost:8000/api/post_shared_task_comment", {
+    if (!comment) return alert("you can't send empty comments")
+
+    fetch("https://tasklim-server.onrender.com/api/post_shared_task_comment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -131,9 +133,13 @@ const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushCo
   }
 
 
+  const responsiveStyles = {
+    height: windowWidth < 1250 ? "100%" : "auto"
+  }
+
   const informationSection = () => {
     return (
-      <div className="task-modal-information">
+      <div className="task-modal-information" style={responsiveStyles}>
         <div className="task-modal-navbar">
           <p onClick={() => setCurrentSection(false)}
             className={!currentSection ? "task-modal-section-selected" : ""}
@@ -222,7 +228,7 @@ const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushCo
         <body>
           {informationSection()}
           {
-            myUser.username === task.createdBy.username ?
+            (!currentSection && windowWidth < 1250) || (windowWidth > 1250) && myUser.username === task.createdBy.username ?
               <div className="task-modal-body-container">
                 <div>
                   <p>edit body</p>
@@ -245,18 +251,18 @@ const TaskModal = ({ task, closeModal, taskChanged, kanbanName, pullTask, pushCo
                   <button onClick={handleSubmit}>submit</button>
                 </div>
               </div>
-              :
-              <div className="task-modal-body-container">
-                <div>
-                  <p>body</p>
-                </div>
-                <p
-                  className="task-modal-body"
-                  style={{ backgroundColor: secondaryColors[newColor] }}
-                >
-                  {task.body}
-                </p>
-              </div>
+              : (currentSection && windowWidth > 1250) ?
+                <div className="task-modal-body-container">
+                  <div>
+                    <p>body</p>
+                  </div>
+                  <p
+                    className="task-modal-body"
+                    style={{ backgroundColor: secondaryColors[newColor] }}
+                  >
+                    {task.body}
+                  </p>
+                </div> : undefined
           }
         </body>
       </div>

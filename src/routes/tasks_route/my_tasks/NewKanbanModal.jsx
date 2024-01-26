@@ -39,11 +39,14 @@ const MemberItem = ({ user, myUser, noMember, addMember, removeMember }) => {
 const NewKanbanModal = ({ user2, close }) => {
   const { myUser, setMyUser } = useContext(UserContext)
   const myUserObject = useMyUser()
+  
 
   const [kanbanName, setKanbanName] = useState("")
   const [kanbanDescription, setKanbanDescription] = useState("")
   const [members, setMembers] = useState([myUser, user2])
   const [imageSelected, setImageSelected] = useState(0)
+
+  const [loading, setLoading] = useState(false)
 
 
   const isImageSelected = (index) => {
@@ -61,6 +64,8 @@ const NewKanbanModal = ({ user2, close }) => {
   }
 
   const handleSubmitKanban = () => {
+    setLoading(true)
+
     if (!kanbanName || !kanbanDescription) return alert("You need a kanban name and description")
     if (members.length === 1) return alert("You need two or more users to create a kanban")
 
@@ -78,7 +83,7 @@ const NewKanbanModal = ({ user2, close }) => {
       }
     }
 
-    fetch("http://localhost:8000/api/post_notification/new_kanban", {
+    fetch("https://tasklim-server.onrender.com/api/post_notification/new_kanban", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fetchData)
@@ -90,6 +95,7 @@ const NewKanbanModal = ({ user2, close }) => {
         } catch (error) {
           console.error("Error al obtener el usuario:", error);
         }
+        setLoading(false)
         close()
       })
       .catch(err => console.log(err))
@@ -161,21 +167,21 @@ const NewKanbanModal = ({ user2, close }) => {
             <h4>Kanban image:</h4>
             <p className="new-kanban-image-alert">Choose the image that best represents your project</p>
             <div className="new-kanban-images-container">
-              {
-                KanbanImages.map((current, index) => (
-                  <img
-                    src={current}
-                    key={index}
-                    className={isImageSelected(index) ? "new-kanban-selected-image" : "new-kanban-secondary-image"}
-                    onClick={() => setImageSelected(index)}
-                  />
-                ))
-              }
+                {
+                  KanbanImages.map((current, index) => (
+                    <img
+                      src={current}
+                      key={index}
+                      className={isImageSelected(index) ? "new-kanban-selected-image" : "new-kanban-secondary-image"}
+                      onClick={() => setImageSelected(index)}
+                    />
+                  ))
+                }
             </div>
           </div>
         </div>
         <div className="new-kanban-footer">
-          <button onClick={handleSubmitKanban}>create kanban</button>
+          <button disabled={loading} onClick={handleSubmitKanban} className={loading ? "disabled" : ""}>create kanban</button>
         </div>
       </main>
     </div>

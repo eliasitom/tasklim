@@ -10,7 +10,7 @@ import {
 
 import SortableItem from "./Task";
 
-export default function Container({ id, items, pushTask, activeId, pullTask }) {
+export default function Container({ id, items, pushTask, activeId, pullTask, moveDown, moveUp }) {
   const { myUser } = useContext(UserContext)
   const [newTask, setNewTask] = useState("")
 
@@ -23,7 +23,7 @@ export default function Container({ id, items, pushTask, activeId, pullTask }) {
     e.preventDefault()
 
     if (newTask) {
-      fetch("http://localhost:8000/api/post_task", {
+      fetch("https://tasklim-server.onrender.com/api/post_task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,6 +45,16 @@ export default function Container({ id, items, pushTask, activeId, pullTask }) {
     }
   }
 
+
+  if(!items) {
+    return (
+      <section className="tasks-route-container">
+        <p className="tasks-route-container-title">{id}</p>
+        <div className="tasks-route-container-tasks-cont" />
+      </section>
+    )
+  }
+
   return (
     <SortableContext
       id={id}
@@ -55,7 +65,14 @@ export default function Container({ id, items, pushTask, activeId, pullTask }) {
         <p className="tasks-route-container-title">{id}</p>
         <div className="tasks-route-container-tasks-cont">
           {items.map((id) => (
-            <SortableItem key={id} id={id} activeId={activeId} pullTask={pullTask} />
+            <SortableItem 
+            key={id} 
+            id={id} 
+            activeId={activeId} 
+            pullTask={pullTask} 
+            moveDown={moveDown}
+            moveUp={moveUp}
+            />
           ))}
         </div>
         {id === "to-do" ? (
