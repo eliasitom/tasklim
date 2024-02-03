@@ -10,7 +10,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import moment from "moment";
 
-import { UserContext } from "../../../contexts/userContext";
+import { UserContext } from "../../../contexts/UserContext";
 import { ProfilePictures, genericProfilePicture } from "../../../images/images";
 import useDimensions from "../../../custom_hooks/useDimensions";
 

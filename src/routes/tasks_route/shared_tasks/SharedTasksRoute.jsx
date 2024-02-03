@@ -18,7 +18,7 @@ import Container from "./SharedContainer";
 import { Item } from "./SharedTask";
 import KanbanPanel from "./KanbanPanel";
 import KanbanDataPanel from "./KanbanDataPanel";
-import { UserContext } from "../../../contexts/userContext";
+import { UserContext } from "../../../contexts/UserContext";
 import useMyUser from "../../../custom_hooks/useMyUser";
 
 

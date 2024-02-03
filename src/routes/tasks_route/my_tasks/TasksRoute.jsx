@@ -2,7 +2,7 @@ import "../../../stylesheets/routes/tasks_route/my_tasks/TasksRoute.css";
 
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../contexts/userContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 import {
   DndContext,

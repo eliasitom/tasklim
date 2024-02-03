@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import "../../stylesheets/routes/note_route/NoteForm.css";
-import { UserContext } from "../../contexts/userContext";
+import { UserContext } from "../../contexts/UserContext";
 
 const NoteForm = ({ pushNote }) => {
   const { myUser } = useContext(UserContext)

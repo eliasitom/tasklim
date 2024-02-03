@@ -1,7 +1,7 @@
 import "../../../stylesheets/routes/tasks_route/my_tasks/Container.css";
 
 import React, { useState, useContext } from "react";
-import { UserContext } from "../../../contexts/userContext";
+import { UserContext } from "../../../contexts/UserContext";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,

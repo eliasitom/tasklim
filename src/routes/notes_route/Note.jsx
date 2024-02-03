@@ -2,7 +2,7 @@ import "../../stylesheets/routes/note_route/Note.css";
 import { useState, useContext } from "react";
 
 import { FaTrash, FaPalette, FaEdit } from "react-icons/fa";
-import { UserContext } from "../../contexts/userContext";
+import { UserContext } from "../../contexts/UserContext";
 
 const Note = ({ data, pullNote }) => {
   const { setNotes } = useContext(UserContext)

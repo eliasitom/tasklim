@@ -2,7 +2,7 @@ import "../../../stylesheets/routes/tasks_route/my_tasks/NewKanbanModal.css";
 
 import { ImCross } from "react-icons/im";
 
-import { UserContext } from "../../../contexts/userContext";
+import { UserContext } from "../../../contexts/UserContext";
 import { useState, useContext } from "react";
 
 import { ProfilePictures, KanbanImages } from "../../../images/images";

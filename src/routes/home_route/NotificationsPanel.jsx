@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import "../../stylesheets/routes/home_route/NotificationsPanel.css"
 
-import { UserContext } from "../../contexts/userContext.jsx";
+import { UserContext } from "../../contexts/UserContext.jsx";
 
 
 
