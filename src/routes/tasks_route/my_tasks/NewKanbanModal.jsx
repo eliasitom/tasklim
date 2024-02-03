@@ -66,8 +66,14 @@ const NewKanbanModal = ({ user2, close }) => {
   const handleSubmitKanban = () => {
     setLoading(true)
 
-    if (!kanbanName || !kanbanDescription) return alert("You need a kanban name and description")
-    if (members.length === 1) return alert("You need two or more users to create a kanban")
+    if (!kanbanName || !kanbanDescription) {
+      setLoading(false)
+      return alert("You need a kanban name and description")
+    }
+    if (members.length === 1) {
+      setLoading(false)
+      return alert("You need two or more users to create a kanban")
+    }
 
     const fetchData = {
       sender: myUser.username,
@@ -98,7 +104,10 @@ const NewKanbanModal = ({ user2, close }) => {
         setLoading(false)
         close()
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        setLoading(false)
+      })
   }
 
   return (

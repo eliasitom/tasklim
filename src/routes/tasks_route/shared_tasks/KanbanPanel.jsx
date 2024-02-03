@@ -1,7 +1,8 @@
 import "../../../stylesheets/routes/tasks_route/KanbanPanel.css"
 
-import { RiVipCrown2Fill } from "react-icons/ri";
+import { Tooltip } from 'react-tooltip'
 
+import { RiVipCrown2Fill } from "react-icons/ri";
 import { KanbanImages, ProfilePictures } from "../../../images/images"
 
 const KanbanPanel = ({ kanban, openAdminPanel }) => {
@@ -22,7 +23,7 @@ const KanbanPanel = ({ kanban, openAdminPanel }) => {
               current.activeMember ?
                 <div key={index} className="kanban-panel-member">
                   <img src={ProfilePictures[current.profilePicture]} />
-                  <p>
+                  <p data-tooltip-id="username-tooltip" data-tooltip-content={current.username}>
                     {current.username}
                     {
                       kanban.createdBy === current.username ?
@@ -30,6 +31,7 @@ const KanbanPanel = ({ kanban, openAdminPanel }) => {
                         : undefined
                     }
                   </p>
+                  <Tooltip id="username-tooltip" />
                 </div>
                 : undefined
           ))

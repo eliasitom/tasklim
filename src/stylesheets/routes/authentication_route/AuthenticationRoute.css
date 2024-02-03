@@ -94,6 +94,11 @@
     animation-fill-mode: forwards;
 }
 
+.auth-alert {
+    margin-top: 5px;
+    color: rgb(149, 57, 57);
+}
+
 
 
 @media (max-width: 800px ) {

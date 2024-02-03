@@ -6,13 +6,16 @@ import { UserContext } from "../../contexts/UserContext"
 
 const AuthenticationRoute = () => {
   const navigate = useNavigate()
-  const {setMyUser} = useContext(UserContext)
+  const { setMyUser } = useContext(UserContext)
 
   const [authMethod, setAuthMethod] = useState(false) // false => login, true => signup
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+
+  const [loading, setLoading] = useState(false)
+  const [authAlert, setAuthAlert] = useState("")
 
 
   useEffect(() => {
@@ -36,9 +39,9 @@ const AuthenticationRoute = () => {
     e.preventDefault()
 
     if (username && password && confirmPassword) {
-      if(username.length < 3) return alert("Your username must contain more than three characters")
-      if(password.length < 7) return alert("The password is too short! Someone could steal your account D:")
-      
+      if (username.length < 3) return alert("Your username must contain more than three characters")
+      if (password.length < 7) return alert("The password is too short! Someone could steal your account D:")
+
       if (password === confirmPassword) {
         fetch("https://tasklim-server.onrender.com/api/signup", {
           method: "POST",
@@ -66,6 +69,7 @@ const AuthenticationRoute = () => {
     e.preventDefault()
 
     if (username && password) {
+      setLoading(true)
       fetch("https://tasklim-server.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -73,12 +77,23 @@ const AuthenticationRoute = () => {
       })
         .then(response => response.json())
         .then(res => {
-          localStorage.setItem("authToken", res.token)
-          localStorage.setItem("user", JSON.stringify(res.user._id))
-          setMyUser(res.user)
-          navigate("/")
+          if (res.message === "session logged in successfully") {
+            localStorage.setItem("authToken", res.token)
+            localStorage.setItem("user", JSON.stringify(res.user._id))
+            setMyUser(res.user)
+            navigate("/")
+          } else if (res.message === "user not found") {
+            setAuthAlert("User not found")
+          } else if (res.message === "incorrect password") {
+            setAuthAlert("Incorrect password")
+          }
+          setLoading(false)
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          console.log(error)
+          setLoading(false)
+          setAuthAlert("Internal error has ocurred, please try again")
+        })
     } else {
       alert("You need to include all credentials")
     }
@@ -87,6 +102,12 @@ const AuthenticationRoute = () => {
   const handleSwitch = () => {
     setAuthMethod(!authMethod)
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAuthAlert("")
+    }, 10000);
+  }, [authAlert])
 
   return (
     <div className="auth-main">
@@ -107,7 +128,8 @@ const AuthenticationRoute = () => {
                 placeholder="Password..."
                 onChange={e => setPassword(e.target.value)}
                 value={password} />
-              <button>log in</button>
+              <button className={loading ? "disabled" : ""} disabled={loading}>log in</button>
+              <p className="auth-alert">{authAlert ? "*" + authAlert : ""}</p>
             </form> :
             <form className="auth-form" onSubmit={handleSignUp}>
               <input
