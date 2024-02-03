@@ -2,7 +2,7 @@ import "../../stylesheets/routes/note_route/NotesRoute.css";
 
 import { useEffect, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../contexts/userContext";
+import { UserContext } from "../../contexts/UserContext";
 
 import Note from "./Note";
 import NoteForm from "./NoteForm";
