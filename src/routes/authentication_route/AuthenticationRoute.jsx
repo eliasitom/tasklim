@@ -150,6 +150,7 @@ const AuthenticationRoute = () => {
               <button>sign up</button>
             </form>
         }
+        <p className="auth-message">Tasklim is a personal project, so it uses free hosting services, this may cause some actions to take a while</p>
       </div>
       <MagicNote />
     </div>
